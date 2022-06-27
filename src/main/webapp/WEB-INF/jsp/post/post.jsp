@@ -33,7 +33,7 @@ form {
 <script>
 	$(document).ready(function() {
 		$('#summernote').summernote({
-			placeholder : '글작성',
+			placeholder : '글을 작성하세요',
 			minHeight : 370,
 			maxHeight : null,
 			focus : true,
