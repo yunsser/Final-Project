@@ -42,9 +42,11 @@ public class TestController {
 		return map;
 	}
 	
-	@GetMapping("/login")
-	public String loginGET() {
+	@GetMapping("/logout")  // logout으로 수정
+	public String logoutGET() {
 		return "test/login";
 	}
+	
+	
 	
 }
