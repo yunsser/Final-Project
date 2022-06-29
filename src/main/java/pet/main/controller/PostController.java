@@ -13,7 +13,7 @@ public class PostController {
 	
 	@Autowired PostSVC svc;
 	
-	@GetMapping("/upload")
+	@GetMapping("/uploaddd")
 	public String upload() {
 		return "post/post";
 	}
