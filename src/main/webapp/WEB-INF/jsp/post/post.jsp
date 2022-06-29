@@ -33,34 +33,74 @@ form {
 <script>
 	$(document).ready(function() {
 		$('#summernote').summernote({
-			placeholder : '글을 작성하세요',
-			minHeight : 370,
+			height : 300,
+			minHeight : null,
 			maxHeight : null,
+			ocus : true,
+			placeholder : '글을 작성하세요',
 			focus : true,
-			lang : 'ko-KR'
+			lang : 'ko-KR',
+			callbacks : {
+				onImageUpload : function(files, editor, welEditable) {
+					sendFile(files[0], editor, welEditable);
+				}
+			}
 		});
 	});
+	
+	
+	function sendFile(file,editor,welEditable) {
+		  data = new FormData();
+		  data.append('file',file);
+		  $.ajax({
+		    data: data,
+		    type: "POST",
+		    url: "/post/image",
+		    enctype: 'multipart/form-data',
+		    cache: false,
+		    contentType: false,
+		    processData: false,
+		    success: function(url) {
+		      editor.insertImage(welEditable, url);
+		    }
+		  });
+		}
+	
 </script>
 
 </head>
 <body>
 
-	<h2 style="text-align: center;">글 작성</h2>
-	<br>
-	<br>
-	<br>
+	<form id="articleForm" role="form" action="/article" method="post">
+		<br style="clear:  both">  
+		<h3 style="margin-bottom:  25px;">글쓰기</h3>
+		<br style="clear:  both">
+		<div class="form-group row">
+			<label for="title" class="col-sm-2 col-form-label"
+				style="font-size: 20px;">글내용</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="title">
+			</div>
+		</div>
 
-	<div style="width: 60%; margin: auto;">
-		<form method="post" action="/write">
-			<input type="text" name="writer" style="width: 20%;"
-				placeholder="작성자" /><br> <input type="text" name="title"
-				style="width: 40%;" placeholder="제목" /> <br>
-			<br>
-			<textarea id="summernote" name="content"></textarea>
-			<input id="subBtn" type="button" value="글 작성" style="float: right;"
-				onclick="goWrite(this.form)" />
-		</form>
-	</div>
+		<div class="form-group row">
+			<label for="author" class="col-sm-2 col-form-label"
+				style="font-size: 20px;">작성자</label>
+			<div class="col-sm-10">
+				<input type="text" class="form-control" id="author" name="author"
+					placeholder="${id}" readonly>
+			</div>
+		</div>
+
+		  
+		<div class="form-group">
+			<textarea class="form-control" id="summernote" name="content"></textarea>
+		</div>
+		  
+		<button type="submit" id="submit" name="submit"
+			class="btn btn-primary pull-right">글작성</button>
+	</form>
+
 
 </body>
 </html>
