@@ -7,8 +7,11 @@ import lombok.Data;
 
 @Data
 public class PostVO {
-	int id;
-	String subject;
-	String cintent;
-	Date regDate;
+	int num;
+	String category;
+	String title;
+	String author;
+	String summernote;
+	Date date;
+	int count;
 }
