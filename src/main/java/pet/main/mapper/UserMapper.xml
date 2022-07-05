@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="pet.main.mapper.UserMapper">
+<!-- 회원가입 기본정보 user테이블에 저장  -->
+	<insert id="signup"
+		parameterType="pet.main.vo.UserVO"
+		useGeneratedKeys="true" keyProperty="unum">
+		INSERT INTO user 
+		VALUES(null, #{uid}, #{upw}, #{name}, #{birth}, #{phone}, #{email}, #{zipcode}, #{addr}, #{detailAddr}, #{pet}, #{petsize}, #{role}, NOW(), #{provider}, #{providerId})
+	</insert>
+	
+<!-- 로그인시 유저 정보 있는지 확인  -->	
+	<select id="findByUserid"
+		parameterType="String"
+		resultType="pet.main.vo.UserVO">
+		SELECT * 
+		FROM user 
+		WHERE uid = #{uid} 
+	</select>
+	
+<!-- 아이디 중복체크  -->
+	<select id="idCheck"
+		parameterType="String"
+		resultType="String">
+		SELECT uid 
+		FROM user 
+		WHERE uid = #{uid}	
+	</select>
+	
+</mapper>
