@@ -22,7 +22,7 @@ import org.w3c.dom.NodeList;
 import pet.main.vo.TestVO;
 
 @Service
-public class TestVSVC {
+public class HomeSVC {
 	public static String getTagValue(String tag, Element eElement) {
 
 		// 결과를 저장할 result 변수 선언
