@@ -8,13 +8,13 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import pet.main.svc.TestVSVC;
+import pet.main.svc.HomeSVC;
 import pet.main.vo.TestVO;
 
 @Controller
 @RequestMapping("/test")
 public class Testcon {
-	@Autowired TestVSVC svc;
+	@Autowired HomeSVC svc;
 	
 	@GetMapping("/api")
 	public String list(Model model) {
