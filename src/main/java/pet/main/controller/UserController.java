@@ -3,11 +3,14 @@ package pet.main.controller;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
+import org.springframework.web.multipart.MultipartFile;
 
 import pet.main.security.model.PrincipalDetails;
 import pet.main.svc.IUserSVC;
@@ -22,7 +26,6 @@ import pet.main.vo.UserVO;
 
 @Controller
 //@RequestMapping("/petmong")
-@SessionAttributes("unum")
 public class UserController {
 
 	@Autowired
@@ -44,9 +47,9 @@ public class UserController {
 	// 일반 로그인을 해도 PrincipalDetails
 	// 회원 페이지 넘어갈시.
 	@GetMapping("/user")
-	public @ResponseBody String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
+	public String user(@AuthenticationPrincipal PrincipalDetails principalDetails) {
 		System.out.println("principalDetails : " + principalDetails.getUser());
-		return "user";
+		return "index";
 	}
 	
 	// 관리자 페이지 넘어갈시.
@@ -77,13 +80,56 @@ public class UserController {
 	}
 	
 	// 회원가입요청받고 회원정보 db저장
+	@Transactional(rollbackFor={Exception.class})
 	@PostMapping("/signup")
-	public @ResponseBody Map<String, Boolean> signup(UserVO user){
+	public @ResponseBody Map<String, Boolean> signup(UserVO user, 
+											@RequestParam(required = false) MultipartFile[] userImg,
+											HttpServletRequest request){
 		Map<String, Boolean> map = new HashMap<>();
-		map.put("signup", svc.signup(user));
+		map.put("signup", svc.signup(user, userImg, request));
 		return map;
 	}
+	
 		
+	// 마이페이지 이동.
+	@GetMapping("/user/mypage")
+	public String mypage(@RequestParam(required = false) String uid,
+							Model m) {
+		m.addAttribute("imgName", svc.findByImg(uid));
+		m.addAttribute("user", svc.findByUser(uid));
+		return "/user/mypage";
+	}
+	
+	// 회원정보수정 페이지 이동.
+	@GetMapping("/user/userInfo")
+	public String userInfo(@RequestParam(required = false) String uid,
+							Model m) {
+		m.addAttribute("imgName", svc.findByImg(uid));
+		m.addAttribute("user", svc.findByUser(uid));
+		return "/user/userInfo";
+	}
+	
+	// 회원정보 수정
+	@Transactional(rollbackFor={Exception.class})
+	@PostMapping("/user/userUpdate")
+	public @ResponseBody Map<String, Boolean> userEdit(UserVO user, 
+			@RequestParam(required = false) MultipartFile[] userImg,
+			HttpServletRequest request){
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("updated", svc.userUpdate(user, userImg, request));
+		return map;
+	}
+	
+	// 회원탈퇴
+	@Transactional(rollbackFor={Exception.class})
+	@PostMapping("/user/delete")
+	public @ResponseBody Map<String, Boolean> userDelete(@RequestParam(required = false) String uid,
+												HttpServletRequest request) {
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("deleted", svc.userDelete(uid, request));
+		return map;
+	}
+	
 	// 권한 페이지 설정시.
 	@Secured("ROLE_ADMIN")
 	@GetMapping("/info")

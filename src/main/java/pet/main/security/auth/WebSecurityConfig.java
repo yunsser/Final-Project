@@ -9,10 +9,9 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+import pet.main.security.handler.FailureHandler;
 import pet.main.security.handler.SuccessHandler;
 import pet.main.security.oauth.PrincipalOauth2UserService;
 
@@ -20,9 +19,15 @@ import pet.main.security.oauth.PrincipalOauth2UserService;
 @EnableWebSecurity // 스프링 시큐리티 필터가 스프링 필터체인에 등록이 된다.
 @EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true) // secured 어노테이션 활성화, preAuthorize, postAuthorize 어노테이션 활성화
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-//
+
+	// 해당 메서드의 리턴되는 오브젝트를 IoC로 등록해준다.
+	@Bean
+    public BCryptPasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
+	
 	@Autowired
-	public AuthenticationFailureHandler failureHandler;
+	public FailureHandler failureHandler;
 	
 	@Autowired
 	public SuccessHandler successHandler;
@@ -30,14 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	private PrincipalOauth2UserService principalOauth2UserService;
 	
-
-	
 	// passwordEncoder() 추가
-	@Bean
-    public PasswordEncoder passwordEncoder() {
-        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-    }
-	
+	// 해당 메서드의 리턴되는 오브젝트를 IoC로 등록해준다.
 	
 	
 	@Override
@@ -45,7 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		// ssl을 사용하지 않으면 true로 사용
 		http.csrf().disable();
 		http.authorizeRequests()
-				.antMatchers("/css/**", "/js/**", "/img/**").permitAll()
+				.antMatchers("/css/**", "/js/**", "/image/**", "/favicon.ico", "/error").permitAll()
 				.antMatchers("/user/**").authenticated() // 인증만 되면 들어갈 수 있다.
 //				.antMatchers("/user/**").access("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')") // 권한설정
 				.antMatchers("/admin/**").access("hasRole('ROLE_ADMIN')") // 권한설정

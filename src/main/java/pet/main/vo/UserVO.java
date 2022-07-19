@@ -24,6 +24,7 @@ public class UserVO {
 	private String provider;
 	private String providerId;
 	
+	// 인풋으로 값들이 들어오지 않아도 에러가 나지 않도록 생성자 오버로딩.
 
 	public UserVO() {}
 	
