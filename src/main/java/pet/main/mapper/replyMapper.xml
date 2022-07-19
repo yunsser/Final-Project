@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+        
+<mapper namespace="pet.main.mapper.replyMapper">
+	
+	
+	<select id="getBoardDetail" 
+		resultType="pet.main.vo.BoardVO">
+		select * from board where idx = #{idx};
+	</select>
+	
+	<select id="getReplyList" 
+	 	resultType="pet.main.vo.ReplyVO">
+	    select * from reply where boardIdx = #{boardIdx} order by screenOrder;
+  	</select>
+  	
+  	<insert id="insertReply"
+		parameterType="pet.main.vo.ReplyVO">
+		insert into reply values (NULL,#{boardIdx},#{nickname},
+						NOW(),#{content},default,#{screenOrder});
+	</insert>
+	
+	<insert id="insertNestedRep">
+		insert into reply values 
+		(NULL,#{boardIdx},#{nickname},NOW(),#{content},#{depth},#{screenOrder});
+	</insert>
+	
+	<select id="maxScreenOrder" resultType="String">
+   		select max(screenOrder) from reply where boardIdx=#{i};
+	</select>
+  
+	<update id="screenOrderUpdate">
+		update reply set screenOrder = screenOrder+1 
+		where boardIdx = #{boardIdx} and screenOrder>#{screenOrder};
+	</update>
+  
+	<delete id="deleteReply">
+		delete from reply where idx = #{i};
+	</delete>
+	
+	<update id="updateReply">
+		update reply set content = #{content}, date=NOW() where idx = #{idx};
+	</update>
+	
+	<update id="deleteReply2">
+		update reply set content = "삭제된 댓글" where idx = #{i};
+	</update>
+</mapper>
