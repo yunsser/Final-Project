@@ -58,7 +58,10 @@
     		<!-- 본문 들어가는 부분 -->	
 			<main class="form-signin">
 				<form id = "loginForm" onsubmit ="return login();">
-				    <img class="mx-auto d-block" src="/images/kakao_login_button.png" alt="">
+<!-- 				    <img class="mx-auto d-block" src="/image/kakao_login_button.png" alt=""> -->
+					<div class="container-fluid" style = "text-align: center;">
+						<a class="navbar-brand" href="/">pet`mong</a>
+					</div>
 				    <div class="form-floating">
 				      <input type="text" class="form-control" id="uid" name ="uid" placeholder="아이디를 입력해주세요.">
 				      <label for="floatingInput">아이디</label>
@@ -75,9 +78,9 @@
 	<!-- 			        <input type="checkbox" value="remember-me"> Remember me -->
 	<!-- 			      </label> -->
 	<!-- 			    </div> -->
-				    <button type = "submit" class="w-100 btn btn-lg btn-primary" style = "margin-top : 0.5em;">로그인</button>
+				    <button type = "submit" class="w-100 btn btn-lg btn-outline-secondary" style = "margin-top : 0.5em;">로그인</button>
 				</form>
-				    <button id = "signBtn" class="w-100 btn btn-lg btn-success" type="button" onclick = "location.href = '/signupForm'">회원가입</button>
+				    <button id = "signBtn" class="w-100 btn btn-lg btn-outline-success" type="button" onclick = "location.href = '/signupForm'">회원가입</button>
 				    
 				    <!-- 소설로그인 시작 -->
 	  					<div class="hr-sect">
@@ -99,10 +102,9 @@
 			<!-- 본문 들어가는 부분 끝 -->
 
 <script type="text/javascript">
-// //로그인 체크
+ //로그인 체크
 function login(){
 			var serData = $('#loginForm').serialize();
-			
 			$.ajax({
 				url:'/login',
 				method:'post',

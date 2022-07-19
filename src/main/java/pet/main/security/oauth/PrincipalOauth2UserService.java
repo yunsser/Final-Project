@@ -24,10 +24,10 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 	
 	@Autowired
 	private IUserSVC svc;
-
-	
-	// 구글로 부터 받은 userRequest 데이터에 대한 후처리되는 함수
+			
+	// SNS로 부터 받은 userRequest 데이터에 대한 후처리되는 함수
 	// 함수 종료시 @AuthenticationPrincipal 어노테이션이 만들어진다.
+	
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
 		System.out.println("getClientRegistration : " + userRequest.getClientRegistration());	// registrationId로 어떤 OAuth로 로그인 했는지 확인가능.
@@ -65,8 +65,7 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 		String email = oAuth2UserInfo.getEmail();
 		String role = "ROLE_USER";
 		
-		UserVO user = svc.findByUserid(uid);
-		
+		UserVO user = svc.findByUser(uid);
 		if(user == null) {
 			System.out.println("OAuth 로그인 처음 자동. 회원가입 진행.");
 			user = UserVO.builder()
@@ -78,11 +77,10 @@ public class PrincipalOauth2UserService extends DefaultOAuth2UserService{
 					.provider(provider)
 					.providerId(providerId)
 					.build();
-			svc.signup(user);
+			svc.signupSNS(user);
 		} else {
 			System.out.println("이미 회원가입이 자동으로 되었습니다.");
 		}
-		
 		
 		return new PrincipalDetails(user, oAuth2User.getAttributes());
 	}

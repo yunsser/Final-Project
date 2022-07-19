@@ -21,12 +21,13 @@ import org.springframework.security.authentication.LockedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
+import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import pet.main.dao.UserDAO;
 
-@Configuration
+@Component
 public class FailureHandler implements AuthenticationFailureHandler {
 	
 
@@ -45,7 +46,7 @@ public class FailureHandler implements AuthenticationFailureHandler {
 		String errormsg = "";
 		
 		if (exception instanceof BadCredentialsException) { // 비밀번호불일치
-			loginFailureCount(uid);
+//			loginFailureCount(uid);
 			errormsg = "비밀번호가 맞지 않습니다. 다시 확인해주세요.";
 		} else if (exception instanceof UsernameNotFoundException) { //존재하지 않는 아이디일 경우 예외.
 			errormsg = "존재하지 않는 사용자입니다.";
@@ -70,7 +71,7 @@ public class FailureHandler implements AuthenticationFailureHandler {
 
 	
 	// 비밀번호를 3번 이상 틀릴 시 계정 잠금 처리
-	protected void loginFailureCount(String uid) {
+//	protected void loginFailureCount(String uid) {
 //		// 틀린 횟수 업데이트
 //		UserDAO.countFailure(uid);
 		
@@ -80,6 +81,6 @@ public class FailureHandler implements AuthenticationFailureHandler {
 			//계정 잠금 처리
 		//	userDao.disabledUsername(username);
 		//}
-	}
+//	}
 
 }

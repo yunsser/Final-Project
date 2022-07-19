@@ -16,12 +16,48 @@
 	  #idcheckbts, #postbts {
 	  	margin-left : 0.5em;
 	  }
+	  
+	  .box {
+	    width: 150px;
+	    height: 150px; 
+	    border-radius: 45%;
+	    overflow: hidden;
+	    border : solid 1px; color: black;
+	   }
+	   
+	  .img {
+		width: 100%;
+	    height: 100%;
+	  }
+	  
+	  #profile {
+	  	padding-top: 90px;
+	  }
+
 </style>
 
-    		<!-- 본문 들어가는 부분 -->	
-<form id = "signupForm" class="container" onsubmit = "return signup()">
+<!-- 본문 들어가는 부분 -->	
+<form id = "signupForm" class="container" onsubmit = "return signup()" enctype="multipart/form-data">
   <fieldset>
     <legend class ="title">회원가입</legend>
+        
+    <div class="input-group">
+		<label for="userImg" id = "profile" class="col-sm-2 col-form-label" style = "">프로필 사진</label>
+		<div class="col-sm-8"  style="text-align:center;"> 
+			<div class="box" style=" display : inline-block; text-align:center;">
+				<img id = "img" class="img" onerror="this.src='/image/seokgu.jpg'" src="/image/seokgu.jpg" />
+			</div>
+				<div style = "font-size: 12px; color : gray;">
+					※ 설정하지 않을시 기본이미지로 적용됩니다. ※
+				</div>
+			<input id = "userImg" class="form-control" name = "userImg" type="file" accept=".jpg, .jpeg, .png" style="display: none;" multiple/>
+			<br />
+			<button type="button" id = "select" class="btn btn-outline-secondary" style = " width : 108px ">사진선택</button>
+			<button type="button" class="btn btn-outline-secondary" style = "width : 108px" onclick="defaultImg()">기본이미지</button>
+		</div>
+	</div>
+	<p />
+	
     <div class="input-group">
       <label for="uid" class="col-sm-2 col-form-label">아이디</label>
       <div class="col-sm-8">
@@ -34,10 +70,12 @@
       </div>
     </div>
     <p />
+    
 	<div class="col-md-6 offset-md-3">
 			<span id="checkId"></span>
 	</div>
 	<p />
+	
 	<div class="input-group">
 		<label for="upw" class="col-sm-2 col-form-label">비밀번호</label>
 		<div class="col-sm-8">
@@ -49,6 +87,7 @@
 		<span id="checkUpw"></span>
 	</div>
 	<p />
+	
 	<div class="input-group">
 		<label for="confirmUpw" class="col-sm-2 col-form-label">비밀번호 확인</label>
 		<div class="col-sm-8">
@@ -60,6 +99,7 @@
 		<span id="checkUpw2"></span>
 	</div>
 	<p />
+	
 	<div class="input-group">
 		<label for="name" class="col-sm-2 col-form-label">이름</label>
 		<div class="col-sm-8">
@@ -67,6 +107,7 @@
 		</div>
 	</div>
 	<p />
+	
 	<div class="input-group">
 		<label for="birth" class="col-sm-2 col-form-label">생년월일</label>
 		<div class="col-sm-8">
@@ -74,6 +115,7 @@
 		</div>
 	</div>
 	<p />
+	
 	<div class="input-group">
 		<label for="phone" class="col-sm-2 col-form-label">전화번호</label>
 		<div class="col-sm-8">
@@ -81,16 +123,18 @@
 		</div>
 	</div>
 	<p />
+	
 	<div class="input-group">
 		<label for="email" class="col-sm-2 col-form-label">email</label>
 		<div class="col-sm-8">
 			<input type="email" class="form-control" id="email" name = "email" placeholder="ex) example@abc.com" />
 		</div>
 	</div>
+	<p />
 	<div class="input-group">
       <label for="zipcode" class="col-sm-2 col-form-label">우편번호</label>
       <div class="col-sm-3">
-        <input type="text" class="form-control" id="zipcode" name = "zipecode" placeholder="우편번호" />
+        <input type="text" class="form-control" id="zipcode" name = "zipcode" placeholder="우편번호" />
       </div>
       <div class="input-group-addon input-group-button">
         <button id = "postbts" type="button" 
@@ -98,64 +142,72 @@
         		onclick="kakaopost();">검색하기</button>      
       </div>
     </div>
+    <p />
+    
 	<div class="input-group">
 		<label for="address" class="col-sm-2 col-form-label">주소</label>
 		<div class="col-sm-8">
 			<input type="text" class="form-control" id="addr" name = "addr" placeholder="주소를 입력해주세요." />
 		</div>
 	</div>
-		<div class="input-group">
+	<p />
+	
+	<div class="input-group">
 		<label for="detailAddr" class="col-sm-2 col-form-label">상세주소</label>
 		<div class="col-sm-8">
 			<input type="text" class="form-control" id="detailAddr" name = "detailAddr" placeholder="상세주소를 입력해주세요." />
 		</div>
 	</div>
 	<p />
+	
 	<div class="input-group">
 		<label for="pet" class="col-sm-2 col-form-label">반려동물</label>
-	<fieldset class="form-group">
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="pet" name = "pet" value="Y" >
-          있다
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="pet" name = "pet" value="N" >
-          없다
-      </div>
-    </fieldset>
+		<fieldset class="form-group">
+	      <div class="form-check">
+	        <input class="form-check-input" type="radio" id="pet" name = "pet" value="Y" checked="checked">
+	          있다
+	      </div>
+	      <div class="form-check">
+	        <input class="form-check-input" type="radio" id="pet" name = "pet" value="N" >
+	          없다
+	      </div>
+	    </fieldset>
 	</div>
 	<p />
+	
 	<div class="input-group">
 		<label for="petsize" class="col-sm-2 col-form-label">반려동물 크기</label>
-	<fieldset class="form-group">
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="petsize" name = "petsize" value="s" >
-          소형견
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="petsize" name = "petsize" value="m" >
-          중형견
-      </div>
-      <div class="form-check">
-        <input class="form-check-input" type="radio" id="petsize" name = "petsize" value="l" >
-          대형견
-      </div>
-    </fieldset>
+		<fieldset class="form-group">
+	      <div class="form-check">
+	        <input class="form-check-input" type="radio" id="petsize" name = "petsize" value="s" >
+	          소형견
+	      </div>
+	      <div class="form-check">
+	        <input class="form-check-input" type="radio" id="petsize" name = "petsize" value="m" >
+	          중형견
+	      </div>
+	      <div class="form-check">
+	        <input class="form-check-input" type="radio" id="petsize" name = "petsize" value="l" >
+	          대형견
+	      </div>
+	    </fieldset>
 	</div>
 	<p />
-	<p />
+	
 	<input type = "hidden" name = "role" value = "ROLE_USER" />
   </fieldset>
 	<div class="form-row text-center">
-    <div class="col-12">
-		    <button type="submit" class="btn btn-outline-primary">가입</button>
-		    <button type="button" class="btn btn-outline-danger">취소</button>
+	    <div class="col-12">
+			    <button type="submit" class="btn btn-outline-primary">가입</button>
+			    <button type="button" class="btn btn-outline-danger" onclick="location.href ='/loginForm'">취소</button>
+		</div>
 	</div>
-	</div>
-
+	<p />
 </form>
 			<!-- 본문 들어가는 부분 끝 -->
-			
+			<!-- 푸터 시작 -->
+		<%@ include file = "layout/footer.jsp" %>
+			<!-- 푸터 끝 -->
 <!-- 주소 api 시작 -->
 <script src="//t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js"></script>
 <script>
@@ -170,14 +222,46 @@ function kakaopost() {
 </script>
 <!-- 주소 api 끝 -->
 
-<!-- 회원가입 폼 전송 시작 -->
+
 <script type="text/javascript">
 
+	// 프로필 사진 업로드 버튼 실행
+	$(function () {
+		$('#select').click(function (e) {
+			e.preventDefault();
+			$('#userImg').click();
+		});
+	});
+	
+	
+	// 기본이미지 설정
+	function defaultImg() {
+      document.getElementById("img").src = "/image/seokgu.jpg";
+      $('#userImg').val('');
+    }
+	
+	// 이미지 미리보기
+	// 이벤트를 바인딩해서 input에 파일이 올라올때 (input에 change를 트리거할때) 위의 함수를 this context로 실행합니다.
+	$("#userImg").change(function(){
+		preview(this);
+	});
+	 
+	function preview(userImg) {
+		 if (userImg.files && userImg.files[0]) {
+		  var reader = new FileReader();
+		  
+		  reader.onload = function (e) {
+		   $('#img').attr('src', e.target.result);  
+		  }
+		  reader.readAsDataURL(userImg.files[0]);
+		  }
+		}
+	
+	<!-- 회원가입 폼 전송 시작 -->
 //아이디 중복 체크확인 위한 변수 선언.
 	 var idChecked = false;
-	 
 	function signup(){
-		
+
 		// 입력항목 체크 변수 선언.
 		 var upw = $('#upw').val();
 		 var confirmUpw = $('#confirmUpw').val();
@@ -188,6 +272,7 @@ function kakaopost() {
 		 var zipcode = $('#zipcode').val();
 		 var addr = $('#addr').val();
 		 var detailAddr = $('#detailAddr').val();
+		 
 		 // 정규표현식
 		 var upwRegExp = /^[a-zA-Z\\d`~!@#$%^&*()-_=+]{8,}$/;
 		 var nameRegExp = /^[a-zA-z가-힣]{2,20}$/;
@@ -196,8 +281,8 @@ function kakaopost() {
 		 var emailRegExp = /^[0-9a-zA-Z]([-_￦.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_￦.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/;
 		
 		if(idChecked == false){
-				alert('아이디 중복을 확인 하세요.');
-				return false;
+			alert('아이디 중복을 확인 하세요.');
+			return false;
 		}
 		
 		if (!upwRegExp.test(upw)) {
@@ -264,15 +349,16 @@ function kakaopost() {
  			alert('상세주소는 필수입력 항목입니다.');
  			return false;
  		}
-		 
- 		
-		var serData = $('#signupForm').serialize();
 		
+		var formData = new FormData($("#signupForm")[0]);
 		$.ajax({
 			url : '/signup',
 			method : 'post',
+			enctype: 'multipart/form-data',
+			processData: false,
+		    contentType: false,
 			cache : false,
-			data : serData, 
+			data : formData, 
 			dataType : 'json',
 			success : function(res){
 				alert(res.signup ? '회원가입 완료' : '실패!');
