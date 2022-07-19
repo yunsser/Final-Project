@@ -3,16 +3,25 @@ package pet.main.controller;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.apache.commons.io.FileUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -22,7 +31,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.google.gson.JsonObject;
 
+import pet.main.dao.PostDAO;
 import pet.main.svc.PostSVC;
+import pet.main.vo.AttachVO;
+import pet.main.vo.PagingVO;
 import pet.main.vo.PostVO;
 
 @Controller
@@ -31,81 +43,152 @@ public class PostController {
 
 	@Autowired
 	PostSVC svc;
+	
+	@Autowired
+	PostDAO dao;
+	
+	@Autowired
+	ResourceLoader resourceLoader;
 
-	@GetMapping("/upload")
-	public String board() {
-		return "post/post";
+	
+//	공지사항 게시판 리스트 + 페이징
+	@GetMapping("/list")
+	public String noticeList(/*@SessionAttribute(name = "id", required = false)String id,*/  PagingVO vo, Model model,
+			@RequestParam(value = "nowPage", required = false) String nowPage,
+			@RequestParam(value = "cntPerPage", required = false) String cntPerPage) {
+
+		/*
+		 * if (id == null) { return "redirect:/post/home"; } else {
+		 */
+			int total = svc.count();
+			if (nowPage == null && cntPerPage == null) {
+				nowPage = "1";
+				cntPerPage = "15";
+			} else if (nowPage == null) {
+				nowPage = "1";
+			} else if (cntPerPage == null) {
+				cntPerPage = "15";
+			}
+			List<Map<String, String>> list = dao.getBoard();
+			model.addAttribute("list", list);
+			vo = new PagingVO(total, Integer.parseInt(nowPage), Integer.parseInt(cntPerPage));
+			model.addAttribute("paging", vo);
+			model.addAttribute("viewAll", svc.select(vo));
+			return "post/list";
+			/* } */
 
 	}
-	
-	@PostMapping("/upload")
+
+//	게시판 글쓰기
+	@GetMapping("/board")
+	public String board() {
+		return "post/board";
+
+	}
+
+	@PostMapping("/board")
 	@ResponseBody
-	public Map<String, Boolean> add(
-			@SessionAttribute(name = "id", required = false) @RequestParam(name = "files", required = false) MultipartFile[] mfiles,
+	public Map<String, Boolean> board(
+			@SessionAttribute(name = "id", required = false) @RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
 			HttpServletRequest request, PostVO post) {
 		Map<String, Boolean> map = new HashMap<>();
-		boolean added = svc.addBoard(mfiles, request, post);
+		boolean added = svc.board(mfiles, request, post);
+		// System.out.println(mfiles);
 		map.put("added", added);
 		return map;
 
 	}
 
-	@PostMapping(value="/uploadSummernoteImageFile", produces = "application/json")
-	@ResponseBody
-	public JsonObject uploadSummernoteImageFile(@RequestParam("file") MultipartFile multipartFile) {
-		
-		JsonObject jsonObject = new JsonObject();
-		
-		String fileRoot = "C:\\Users\\user\\Desktop\\Final-Project\\imges\\";	//저장될 외부 파일 경로
-		String originalFileName = multipartFile.getOriginalFilename();	//오리지날 파일명
-		String extension = originalFileName.substring(originalFileName.lastIndexOf("."));	//파일 확장자
-				
-		String savedFileName = UUID.randomUUID() + extension;	//저장될 파일 명
-		
-		File targetFile = new File(fileRoot + savedFileName);	
-		
+//	파일 다운로드
+	@GetMapping("/download/{filename}")
+	public ResponseEntity<Resource> download(HttpServletRequest request, @PathVariable String filename) {
+		Resource resource = (Resource) resourceLoader.getResource("upload/" + filename);
+		System.out.println("파일명:" + resource.getFilename());
+		String contentType = null;
 		try {
-			InputStream fileStream = multipartFile.getInputStream();
-			FileUtils.copyInputStreamToFile(fileStream, targetFile);	//파일 저장
-			jsonObject.addProperty("url", "/summernoteImage/"+savedFileName);
-			jsonObject.addProperty("responseCode", "success");
-				
+			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
 		} catch (IOException e) {
-			FileUtils.deleteQuietly(targetFile);	//저장된 파일 삭제
-			jsonObject.addProperty("responseCode", "error");
 			e.printStackTrace();
 		}
-		
-		return jsonObject;
+
+		if (contentType == null) {
+			contentType = "application/octet-stream";
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
+	}
+
+	@GetMapping("/file/download/{num}")
+	public ResponseEntity<Resource> fileDownload(@PathVariable int num, HttpServletRequest request) {
+		// attach 테이블에서 att_num 번호를 이용하여 파일명을 구하여 위의 방법을 사용
+		String filename = svc.getFilename(num);
+		Resource resource = (Resource) resourceLoader.getResource("upload/" + filename);
+		// System.out.println("파일명:"+resource.getFilename());
+		String contentType = null;
+		try {
+			contentType = request.getServletContext().getMimeType(resource.getFile().getAbsolutePath());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+
+		if (contentType == null) {
+			contentType = "application/octet-stream";
+		}
+
+		return ResponseEntity.ok().contentType(MediaType.parseMediaType(contentType))
+				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + resource.getFilename() + "\"")
+				.body(resource);
+	}
+
+//	게시판 수정화면보기
+	
+	@GetMapping("/detail")
+	public String detailBoard(@SessionAttribute(name = "id", required = false) @RequestParam int num,
+			Model model) { // 일치시켜주면 // 들어감
+		PostVO post = svc.detailNum(num);
+		model.addAttribute("post", post);
+		return "post/detail";
+	}
+
+	@GetMapping("/edit")
+	public String detailedit(@SessionAttribute(name = "id", required = false) @RequestParam int num,
+			Model model) {
+		PostVO post = svc.detailNum(num);
+		model.addAttribute("post", post);
+		return "post/edit";
+	}
+
+//	게시판 수정하기
+	@PostMapping("/update")
+	@ResponseBody
+	public Map<String, Boolean> updateBoard(
+			@SessionAttribute(name = "id", required = false) @RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
+			HttpServletRequest request, PostVO post, @RequestParam("delfiles") List<String> delfiles, Model model) {
+		Map<String, Boolean> map = new HashMap<>();
+		boolean updated = svc.updated(request, post, mfiles, delfiles);
+		map.put("updated", updated);
+		return map;
+	}
+
+//	게시판 삭제
+	@PostMapping("/delete")
+	@ResponseBody
+	public Map<String, Boolean> deleted(@RequestParam int num) {
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("deleted", svc.deleted(num));
+		return map;
+	}
+
+	@PostMapping("/file/delete")
+	@ResponseBody
+	public Map<String, Boolean> deleteFileInfo(@RequestParam List<String> delfiles) {
+		boolean deleteFileInfo = svc.deleteFileInfo(delfiles);
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("deleteFileInfo", deleteFileInfo);
+		return map;
 	}
 	
-//	// 썸머노트 이미지처리 ajax
-//	@PostMapping("/summernoteImage")
-//	@RequestMapping
-//	// 썸머노트 이미지 처리
-//	public String insertFormData2(@RequestParam(value = "file", required = false) MultipartFile file,
-//			HttpSession session) {
-//		Gson gson = new Gson();
-//		Map<String, String> map = new HashMap<String, String>();
-//		// 2) 웹 접근 경로(webPath) , 서버 저장 경로 (serverPath)
-//		String WebPath = "/resources/images/summernoteImages/"; // DB에 저장되는 경로
-//		String serverPath = session.getServletContext().getRealPath(WebPath);
-//		String originalFileName = file.getOriginalFilename();
-//		String extension = originalFileName.substring(originalFileName.lastIndexOf("."));
-//		String savedFileName = UUID.randomUUID() + extension; // 저장될 파일 명
-//		File targetFile = new File(serverPath + savedFileName);
-//		try {
-//			InputStream fileStream = file.getInputStream();
-//			FileUtils.copyInputStreamToFile(fileStream, targetFile); // 파일 저장
-//			// contextroot + resources + 저장할 내부 폴더명
-//			map.put("url", WebPath + savedFileName);
-//			map.put("responseCode", "success");
-//		} catch (IOException e) {
-//			FileUtils.deleteQuietly(targetFile); // 저장된 파일 삭제
-//			map.put("responseCode", "error");
-//			e.printStackTrace();
-//		}
-//		return gson.toJson(map);
-//	}
 
 }

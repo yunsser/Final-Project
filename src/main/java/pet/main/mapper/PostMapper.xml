@@ -4,12 +4,88 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pet.main.mapper.PostMapper">
 
-	<insert id="addBoard" parameterType="pet.main.vo.PostVO"
+<!-- 공지 총 게시글 갯수 출력 -->
+	<select id="count" resultType="int">
+		SELECT COUNT(*) FROM hospital
+	</select>
+
+	<!-- 공지 페이징 처리 후 게시글 조회 -->
+	<select id="select" resultType="pet.main.vo.PostVO">
+
+		SELECT *
+		FROM (
+		SELECT
+		@rownum:=@rownum+1 rn, A.*
+		FROM (
+		SELECT *
+		FROM hospital,
+		(SELECT
+		@ROWNUM:=0)
+		t
+		ORDER BY num DESC
+		) A
+		) B
+
+		WHERE RN BETWEEN #{start} AND
+		#{end}
+	</select>
+
+	<!-- 리스트 -->
+	<select id="getBoard" resultType="map">
+		SELECT num, category, title, author,
+		summernote, date, count FROM hospital
+	</select>
+
+	<!--글작성 -->
+	<insert id="board" parameterType="pet.main.vo.PostVO"
 		useGeneratedKeys="true" keyProperty="num">
 		INSERT INTO hospital VALUES(null, #{category}, #{author}, #{title}, #{summernote}, NOW(), #{count})
 	</insert>
 
+	<!-- 파일업로드 -->
+	<insert id="fileInfo"
+		parameterType="pet.main.vo.AttachVO">
+		INSERT INTO hos_attach
+		VALUES(null, #{hos_num},
+		#{filename}, #{filesize})
+	</insert>
 
+	<!-- 파일 불러오기 -->
+	<select id="getFilename" parameterType="Integer"
+		resultType="String">
+		SELECT filename FROM hos_attach WHERE
+		att_num=#{att_num}
+	</select>
 
+	<!-- 게시글 불러오기 -->
+	<select id="detailNum" resultType="map"
+		parameterType="Integer">
+		SELECT *
+		FROM hospital b
+		LEFT OUTER JOIN hos_attach a
+		ON
+		b.num=a.hos_num
+		WHERE b.num=#{num};
+	</select>
+
+	<!-- 수정하기 -->
+	<update id="updated" parameterType="pet.main.vo.PostVO">
+		UPDATE hospital SET
+		title=#{title},
+		summernote=#{summernote}
+		WHERE num=#{num}
+	</update>
+
+	<!-- 파일삭제 -->
+	<delete id="deleteFileInfo" parameterType="Integer">
+		DELETE FROM
+		hos_attach WHERE att_num=#{num}
+	</delete>
+
+	<!-- 글삭제 -->
+	<delete id="deleted" parameterType="Integer">
+		DELETE FROM hospital
+		WHERE num=#{num}
+	</delete>
 
 </mapper>

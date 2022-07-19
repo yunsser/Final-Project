@@ -12,7 +12,10 @@
 <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css">
 <!-- jquery cdn -->
 <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+
+
 <title>pet`mong</title>
+
 <style type="text/css">
 		.bd-placeholder-img {
         font-size: 1.125rem;
@@ -40,6 +43,7 @@
       .form-control.me-2 {
       	width : 380px;
       }
+      
       
 </style>
 </head>
@@ -76,4 +80,6 @@
 <!-- 네비바 끝 -->
 
 </body>
+
+
 </html>
