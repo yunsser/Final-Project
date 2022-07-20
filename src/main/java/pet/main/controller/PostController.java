@@ -74,10 +74,6 @@ public class PostController {
 
 	}
 
-	@GetMapping("/test")
-	public String test() {
-		return "post/test";
-	}
 //	게시판 글쓰기
 	@GetMapping("/board")
 	public String board() {

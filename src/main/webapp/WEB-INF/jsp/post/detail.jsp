@@ -258,15 +258,6 @@ var newText = text.replace(/(<([^>]+)>)/ig,"");
 
 <title>상세보기</title>
 
-<div style="font-size: 30px;">
-
-<i class="fa fa-times" aria-hidden="true"></i>
-<i class="fa fa-pencil" aria-hidden="true"></i>
-<i class="fa fa-eraser" aria-hidden="true"></i>
-    </div>
-    
-    
-    
 <div class="container">
 	<div class="nav-scroller py-1 mb-2">
 		<nav class="nav d-flex justify-content-between">
@@ -354,7 +345,7 @@ var newText = text.replace(/(<([^>]+)>)/ig,"");
 	</div>
 <br>
 	<div id="reply">
-	<table class="table table-hover" id="replyList" style="margin:auto; width:800px;">
+	<table class="table" id="replyList" style="margin:auto; width:800px;">
 		<tr class="table-info" >
         	<th style="text-align: center; width:200px;">작성자</th>
        	 	<th style="text-align: center;">내용</th>
@@ -365,10 +356,10 @@ var newText = text.replace(/(<([^>]+)>)/ig,"");
       <!-- 닉네임과 들여쓰기 처리 -->
       <c:forEach var="reply" items="${replyList}">  
 			<c:if test="${reply.depth > 0}">  <!-- 대댓글의 경우 하늘색으로 출력 -->
-				<tr class="table-active" style="text-align:left;">
+				<tr class="table-light" style="text-align:left;">
 			</c:if>
         	<c:if test="${reply.depth <= 0}">
-        		<tr class="table-light" style="text-align:left;">
+        		<tr class="table-active" style="text-align:left;">
 	     	   
        		</c:if>
           	<c:if test="${reply.depth > 0}">  <!-- 대댓글의 경우 들여쓰기 -->
