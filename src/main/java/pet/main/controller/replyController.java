@@ -55,7 +55,7 @@ public class replyController {
 	@PostMapping("/insertReply")
 	//댓글 삽입
 	public Map<String, Boolean> insertReply(ReplyVO reply) {
-		String screenOrder = rService.maxScreenOrder(3);  //3번 게시물의 가장 높은 댓글 순서 번호를 문자열로 가져온다
+		String screenOrder = rService.maxScreenOrder(reply.getBoardIdx());  //게시물의 가장 높은 댓글 순서 번호를 문자열로 가져온다
 		int sOrder = 0;  // 새 댓글을 넣을때 screenOrder를 설정해 줄 변수
 		if(screenOrder != null) sOrder = Integer.parseInt(screenOrder) + 1; //null이 아니면 screenOrder의 최댓값 +1
 		reply.setScreenOrder(sOrder);
@@ -69,13 +69,12 @@ public class replyController {
 	@PostMapping("/insertNestedRep")
 	//대댓글 삽입
 	public Map<String, Boolean> insertNestedRep(ReplyVO reply) {
-		boolean updated = rService.screenOrderUpdate(reply); // 삽입할 댓글보다 밑의 순서에 올 댓글들의 screenOrder +1
+		rService.screenOrderUpdate(reply); // 삽입할 댓글보다 밑의 순서에 올 댓글들의 screenOrder +1
 		reply.setDepth(reply.getDepth()+1);  // 자식댓글이므로 depth항목에 +1
 		reply.setScreenOrder(reply.getScreenOrder()+1); 
 		boolean inserted = rService.insertNestedRep(reply);
-		boolean successed = updated && inserted;
 		Map<String, Boolean> map = new HashMap<>();
-		map.put("inserted", successed);
+		map.put("inserted", inserted);
 		return map;
 	}
 	

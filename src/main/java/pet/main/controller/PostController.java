@@ -26,8 +26,10 @@ import org.springframework.web.multipart.MultipartFile;
 
 import pet.main.dao.PostDAO;
 import pet.main.svc.PostSVC;
+import pet.main.svc.replyService;
 import pet.main.vo.PagingVO;
 import pet.main.vo.PostVO;
+import pet.main.vo.ReplyVO;
 
 @Controller
 @RequestMapping("/post")
@@ -42,7 +44,8 @@ public class PostController {
 	@Autowired
 	ResourceLoader resourceLoader;
 
-	
+	@Autowired
+	private replyService rService;
 //	공지사항 게시판 리스트 + 페이징
 	@GetMapping("/list")
 	public String noticeList(/*@SessionAttribute(name = "id", required = false)String id,*/  PagingVO vo, Model model,
@@ -71,6 +74,10 @@ public class PostController {
 
 	}
 
+	@GetMapping("/test")
+	public String test() {
+		return "post/test";
+	}
 //	게시판 글쓰기
 	@GetMapping("/board")
 	public String board() {
@@ -137,10 +144,15 @@ public class PostController {
 //	게시판 수정화면보기
 	
 	@GetMapping("/detail")
-	public String detailBoard(@SessionAttribute(name = "id", required = false) @RequestParam int num,
+	public String detailBoard(@SessionAttribute(name = "id", required = false) String uid, @RequestParam int num,
 			Model model) { // 일치시켜주면 // 들어감
 		PostVO post = svc.detailNum(num);
 		model.addAttribute("post", post);
+		rService.updateViewCnt(post.getNum()); // 게시판 조회수증가
+		String s = "scott"; // 임의의 uid
+		model.addAttribute("uid", s); // 현재 접속자의 uid 
+		List<ReplyVO> replyList = rService.getReplyList(post.getNum()); // 해당 게시판의 댓글리스트를 불러온다
+		model.addAttribute("replyList", replyList); // 댓글리스트
 		return "post/detail";
 	}
 
