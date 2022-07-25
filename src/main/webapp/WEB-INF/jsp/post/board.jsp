@@ -22,6 +22,11 @@
 	src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.js"></script>
 <!-- include summernote-ko-KR -->
 <script src="/resources/js/summernote-ko-KR.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"
+integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.js"
+  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
+  crossorigin="anonymous"></script>
 <style>
 form {
 	width: 70%;
@@ -139,40 +144,57 @@ form {
 
 <form name="addform" id="form" role="form" method="post" onsubmit="return add();" enctype="multipart/form-data">
 
+<input type = "text" id="sidoNm">
+<input type = "text" id="gugunNm">
+<label for="cateCodeA">지역 분류 카테고리 </label><input type="hidden" id="cateCodeA" name="cateCodeA" class="data"><p></p>
+<div class="cate_wrap"><select class="cate1" name="code" style="width:130px;height:30px;" id="data" >
+<option selected value='none' id="sisi">시/도 선택</option></select></div>
+
+
+
+
+
+<div class="cate_wrap"><select class="cate2" name="code" style="width:130px;height:30px;" id="gugubCd" >
+<option selected value='none'>군/구 선택</option></select></div>
+
+
+
+<%--
+ <option selected value='none'>시/도 선택</option>
+<c:forEach var="codemap" items="${codemap}">
+<option value="${codemap.code}" ${code == codemap.sidoNm ? "selected":""}>
+${codemap.sidoNm}
+</option>
+</c:forEach>
+</select>
+<select class="cate2" name="gugunCD"  style="width:130px;height:30px;"  id="gugunCD" >
+<option value='none'>군/구 선택</option>
+<c:forEach var="gugunmap" items="${gugunmap}">
+<option value="${gugunmap.gugunNm}" ${gugunCD == gugunmap.gugunNm ? "selected":""} >
+${gugunmap.gugunNm}
+</option>
+</c:forEach>
+</select>
+</div>
+ --%>
+
 	<div class="form-group row">
 		<label for="select" class="col-sm-2 col-form-label"
-			style="font-size: 19px;">구 선택</label>
+			style="font-size: 19px;">장소</label>
 		<div class="col-sm-10">
-			<select class="form-select" id="category" name="category">
-				<option>강남구</option>
-				<option>강동구</option>
-				<option>강북구</option>
-				<option>강서구</option>
-				<option>관악구</option>
-				<option>광진구</option>
-				<option>구로구</option>
-				<option>금천구</option>
-				<option>노원구</option>
-				<option>도봉구</option>
-				<option>동대문구</option>
-				<option>동작구</option>
-				<option>마포구</option>
-				<option>서대문구</option>
-				<option>서초구</option>
-				<option>성동구</option>
-				<option>성북구</option>
-				<option>송파구</option>
-				<option>양천구</option>
-				<option>영등포구</option>
-				<option>용산구</option>
-				<option>은평구</option>
-				<option>종로구</option>
-				<option>중구</option>
-				<option>중랑구</option>
-			</select>
+		<input type="text" class="form-control" id="place_name" name="place_name">
+		<input type="text" class="form-control" id="road_address_name" name="road_address_name">
+		<input type="text" class="form-control" id="address_name" name="address_name">
+		<input type="text" class="form-control" id="phone" name="phone">
+	</p>
+		<%--
+		 <button type ="button" id = "kakaomap">장소 검색</button>
+		 --%>
+		<input id="newwin" name="newwin" type="button" value="장소 검색" onclick="showPopup();">
 		</div>
 	</div>
-
+	</p>
+ 
 	<div class="form-group row">
 		<label for="title" class="col-sm-2 col-form-label"
 			style="font-size: 19px;">글내용</label>
@@ -210,6 +232,100 @@ form {
 		
 </form>
 
+<script>
+var myWindow = window.onload = function(){
+	document.getElementById("kakaomap").onclick = function(){
+		window.open("/map", "장소 검색","width=1000px,height=500px,top=200px;");
+		
+	}
+};
+
+function showPopup(){
+	window.open("/map","팝업 테스트","width=1000, height=1000, top=10, left=10");
+};
+        
+    </script>
+    
+    <script>
+   let codeList = JSON.parse('${codeList}');
+  
+   let cate1Array = new Array();
+   let cate2Array = new Array();
+   let cate1Obj = new Object();
+   let cate2Obj = new Object();
+   
+   let cateSelect1 = $(".cate1");      
+   let cateSelect2 = $(".cate2");
+   
+   /* 카테고리 배열 초기화 메서드 */
+   
+   
+function makeCateArray(obj,array,codeList, tier){
+for(let i = 0; i < codeList.length; i++){
+      if(codeList[i].tier == tier){
+         
+         obj = new Object();
+         
+         obj.code = codeList[i].code;
+         obj.sidoNm = codeList[i].sidoNm;
+         obj.gugunNm = codeList[i].gugunNm;
+         obj.parent = codeList[i].parent;
+         obj.gugunCd = codeList[i].gugunCd;
+         
+         array.push(obj);            
+         
+      }
+   }   
+   }
+    
+
+   $(document).ready(function(){
+      console.log(cate1Array);
+      
+   });
+
+   /* 배열 초기화 */
+   
+   makeCateArray(cate1Obj,cate1Array,codeList,1);
+   makeCateArray(cate2Obj,cate2Array,codeList,2);
+
+   $(document).ready(function(){
+      console.log(cate1Array);
+      console.log(cate2Array);
+   });
+   
+   /* 대분류 <option> 태그 */
+   for(let i = 0; i < cate1Array.length; i++){
+	   cateSelect1.append("<option value='"+cate1Array[i].code+"'>" + cate1Array[i].sidoNm + "</option>");
+   }
+   
+   /* 중분류 <option> 태그 */
+   $(cateSelect1).on("change",function(){
+      let selectVal1 = $(this).find("option:selected").val();
+      
+      cateSelect2.children().remove();
+
+      cateSelect2.append("<option value='none'>군/구 선택</option>");
+   
+      for(let i = 0; i < cate2Array.length; i++){
+         if(selectVal1 == cate2Array[i].parent){
+        	 cateSelect2.append("<option value='"+cate2Array[i].gugunCd+"'>" + cate2Array[i].gugunNm + "</option>")
+        	 	
+            //cateSelect2.append("<option value='"+cate2Array[i].gugunCd+"'>" + cate2Array[i].gugunNm + "</option>")
+            //location.href = "/code?gugunCD="+cate2Array[i].gugunCd;
+         }
+      }      
+   });
+   
+   $(cateSelect2).on("change",function(){
+	      let selectVal2 = $(this).find("option:selected").val();
+	      
+	 });   
+   
+
+   
+ 
+</script>
 
 </body>
 </html>

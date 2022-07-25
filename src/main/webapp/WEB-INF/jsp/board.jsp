@@ -11,7 +11,6 @@
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script>
-
   	/* 댓글 입력 */
   	function insertReply() {
   		
@@ -25,7 +24,7 @@
   		}
   		
   		$.ajax({
-  			url:"/reply/insertReply",
+  			url:"/insertReply",
   			method:'post',
   			cache:false,
   			data:serData,
@@ -49,7 +48,7 @@
   		
   		var query = {idx : idx}
   		$.ajax({
-  			url:"/reply/deleteReply",
+  			url:"/deleteReply",
   			method:'post',
   			cache:false,
   			data:query,
@@ -74,7 +73,6 @@
 		updateReply += "</div>";
 		updateReply += "<input type='button' class='btn btn-dark' value='수정하기' onclick='updateRep("+idx+", )'/>";
 		updateReply += "<input type='button' class='btn btn-dark' value='취소' onclick='cancleUpdateRep("+idx+")'/>";
-
   		$("#updateReplyBox"+idx).slideDown(500);
   		$("#updateReplyBox"+idx).html(updateReply); 
   	}
@@ -91,7 +89,7 @@
   						idx : idx}
   		
   		$.ajax({
-  			url:"/reply/updateReply",
+  			url:"/updateReply",
   			method:'post',
   			cache:false,
   			data:query,
@@ -157,7 +155,7 @@
   			}
   			
   			$.ajax({
-  	  			url:"/reply/insertNestedRep",
+  	  			url:"/insertNestedRep",
   	  			method:'post',
   	  			cache:false,
   	  			data:query,
@@ -209,7 +207,7 @@
 	/* tr:last-child>th { border-right: none; }  */
 	/* table#replyList {position: relative;} */
   </style>
-  
+
   <%-- <link rel = "stylesheet" href= "${pageContext.request.contextPath}/resources/css/bootstrap.min.css"> --%>
   <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/resources/css/bootstrap.css">
 </head>
@@ -220,24 +218,24 @@
 			<tr><th>글쓴이</th>
 				<td>${board.name}</td>
 			</tr>
-      	
+
 			<tr><th>작성시간</th>
      	 		<td>${board.date}</td>
       		</tr>
-      		
+
 			<tr><th>조회수</th>
         		<td>${board.readnum}</td>
 			</tr>
-      
+
 			<tr><th>글제목</th>
 				<td>${board.title}</td>
 			</tr>
-      
+
 			<tr><th>글내용</th>
 				<td colspan="3">
 				<td>${board.content}</td>
 			</tr>
-      
+
      		<tr>
         		<td>
 		         <%--  <c:if test="${smid == board.mid || smid == 'admin'}"> 만약 작성자와 접속자가 같으면
@@ -248,10 +246,10 @@
       		</tr>
     	</table>
   	</form>
-  
-  
-  
-  
+
+
+
+
 <!-- 댓글 출력 -->
 <div class="container">
 	<div>
@@ -267,7 +265,7 @@
        		<th style="text-align: center;">작성시간</th>
         	<th style="text-align: center; width:80px;">답글달기</th>
       	</tr>
-      
+
       <!-- 닉네임과 들여쓰기 처리 -->
       <c:forEach var="reply" items="${replyList}">  
 			<c:if test="${reply.depth > 0}">  <!-- 대댓글의 경우 하늘색으로 출력 -->
@@ -285,26 +283,26 @@
             	<td style="text-align:left;">
              	 ${reply.nickname} 
           	</c:if>
-          	<c:if test="${reply.content != '삭제된 댓글' && reply.nickname eq uid}">
+          	
           	  <%--  <c:if test=""> 접속자와 닉네임이 같으면
 	          </c:if> --%>
             	<a href="javascript:updateReplyForm(${reply.idx}, '${reply.content}', '${reply.nickname}')"><i class="glyphicon glyphicon-erase"></i></a>
           		<a href="javascript:deleteReply(${reply.idx})"><i class="glyphicon glyphicon-remove" style="color:#a35f65;"></i></a>
-          	</c:if>
           	
-	       
-          
-          
+
+
+
+
 	          <!-- 댓글내용 -->
 	          <td style="text-align:left;">${reply.content}
 	        	  <div id="updateReplyBox${reply.idx}"></div>
 	          </td>
-	       	 	 
-	          	
+
+
 	          <!-- 작성일 -->
 	          <td style="text-align:left; text-align: center;">${reply.date}</td>
-	          
-	          
+
+
 	          <!-- 버튼처리 -->
 	          <td style="text-align: center;">
 	          	<a href="javascript:insertNestedRepForm('${reply.idx}','${reply.depth}','${reply.screenOrder}','${reply.nickname}')"><i class="glyphicon glyphicon-pencil"></i></a>
@@ -336,6 +334,6 @@
 	    </table>
 	    <input type="hidden" name="boardIdx" value="${board.idx}"/>
 	</form>
-	
+
 </body>
-</html>
+</html> 

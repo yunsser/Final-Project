@@ -15,12 +15,12 @@ public class replyService {
 
 	@Autowired
 	private replyDAO dao;
-	
-	
+
+
 	public BoardVO getBoardDetail(int i) {
 		return dao.getBoardDetail(i);
 	}
-	
+
 	public List<ReplyVO> getReplyList(int i) {
 		return dao.getReplyList(i);
 	}
@@ -28,11 +28,11 @@ public class replyService {
 	public boolean insertReply(ReplyVO reply) {
 		return dao.insertReply(reply);
 	}
-	
+
 	public boolean insertNestedRep(ReplyVO reply) {
 		return dao.insertNestedRep(reply);
 	}
-	
+
 	public String maxScreenOrder(int i) {
 		return dao.maxScreenOrder(i);
 	}
@@ -40,7 +40,7 @@ public class replyService {
 	public boolean screenOrderUpdate(ReplyVO reply) {
 		return dao.screenOrderUpdate(reply);
 	}
-	
+
 	public boolean deleteReply(int i) {
 		return dao.deleteReply(i);
 	}

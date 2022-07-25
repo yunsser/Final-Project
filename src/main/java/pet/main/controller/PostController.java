@@ -1,6 +1,7 @@
 package pet.main.controller;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,14 +19,20 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import pet.main.dao.PostDAO;
 import pet.main.svc.PostSVC;
+import pet.main.svc.TestSVC;
+import pet.main.vo.PageVO;
 import pet.main.vo.PagingVO;
 import pet.main.vo.PostVO;
 
@@ -35,6 +42,9 @@ public class PostController {
 
 	@Autowired
 	PostSVC svc;
+	
+	@Autowired
+	private TestSVC codesvc;
 	
 	@Autowired
 	PostDAO dao;
@@ -73,7 +83,23 @@ public class PostController {
 
 //	게시판 글쓰기
 	@GetMapping("/board")
-	public String board() {
+	public String board(@RequestParam(name="gugunCD", required=false, defaultValue="")String gugunCD,
+			@RequestParam(name="code", required=false, defaultValue="")String code,
+			@RequestParam(name="sidoNm", required=false, defaultValue="")String sidoNm,
+			@RequestParam(name="gugunNm", required=false, defaultValue="")String gugunNm,
+			Model model) throws JsonProcessingException {
+		ObjectMapper objm = new ObjectMapper();
+		List list = codesvc.codeList();
+		List codemap = codesvc.codeListMap();
+		List gugunmap = codesvc.gugunListMap(code);
+        String codeList = objm.writeValueAsString(list);
+        model.addAttribute("codemap",codemap);
+        model.addAttribute("gugunmap",gugunmap);
+        model.addAttribute("codeList", codeList);
+        model.addAttribute("gugunCD", gugunCD);
+        model.addAttribute("code",code);
+        model.addAttribute("sidoNm", sidoNm);
+        model.addAttribute("gugunNm", gugunNm);
 		return "post/board";
 
 	}
@@ -82,7 +108,7 @@ public class PostController {
 	@ResponseBody
 	public Map<String, Boolean> board(
 			@SessionAttribute(name = "id", required = false) @RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
-			HttpServletRequest request, PostVO post) {
+			HttpServletRequest request, PostVO post){        
 		Map<String, Boolean> map = new HashMap<>();
 		boolean added = svc.board(mfiles, request, post);
 		// System.out.println(mfiles);
@@ -157,7 +183,7 @@ public class PostController {
 	@ResponseBody
 	public Map<String, Boolean> updateBoard(
 			@SessionAttribute(name = "id", required = false) @RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
-			HttpServletRequest request, PostVO post, @RequestParam("delfiles") List<String> delfiles, Model model) {
+			HttpServletRequest request, PostVO post, List<String> delfiles, Model model) {
 		Map<String, Boolean> map = new HashMap<>();
 		boolean updated = svc.updated(request, post, mfiles, delfiles);
 		map.put("updated", updated);
@@ -181,6 +207,4 @@ public class PostController {
 		map.put("deleteFileInfo", deleteFileInfo);
 		return map;
 	}
-	
-
 }

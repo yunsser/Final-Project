@@ -119,10 +119,12 @@ function login(){
 // 					xhr.setRequestHeader($token.data("token-name"), $token.val());
 // 				},
 				success : function(json, statusText, xhr, $form) {
-					if (json.success == true) {
+					if (json.success == true){
 						alert('로그인성공!')
-						var url = json.returnUrl || './';
-						document.location.href = url;
+						var referrer = document.referrer;
+						document.location.href = referrer;
+						//var url = json.returnUrl || './';
+						//document.location.href = url;
 					} else {
 						alert(json.message);
 					}

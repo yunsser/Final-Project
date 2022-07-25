@@ -3,14 +3,20 @@
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
     <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
+    <%@ include file = "/WEB-INF/jsp/layout/headerBasic.jsp" %>
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <title>지역 분류 카테고리</title>
 <style>
- .pagination {text-align:center; color:black;}
- .name { text-decoration:none; color:black;}
+   .search {margin-top : 15px; display: flex; justify-content: center;}
+   .form-select { float:left; margin-right: 5px; }
+   .pagination {display: flex; justify-content: center; margin-top: 15px; }
+   .name { text-decoration:none; color:black;}
+   .container{
+      margin-top : 15px; 
+   }
  
 </style>
 
@@ -29,30 +35,43 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 
 </head>
 <body>
-<label for="cateCodeA">지역 분류 카테고리 </label><p></p><input type="hidden" id="cateCodeA" name="cateCodeA" class="data"><p></p>
-<form action ="" method="get">
-<input type="hidden" id="pageNum" name="pageNum" value="${pageNum}">
-<div class="cate_wrap">
-<select class="cate1" name="code" style="width:130px;height:30px;" id="data" >
-<option selected value='none'>시/도 선택</option>
-<c:forEach var="codemap" items="${codemap}">
-<option value="${codemap.code}" ${code == codemap.code ? "selected":""}>
-${codemap.sidoNm}
-</option>
-</c:forEach>
-</select>
-<select class="cate2" name="gugunCD"  style="width:130px;height:30px;"  id="gugunCD" >
-<option value='none'>군/구 선택</option>
-<c:forEach var="gugunmap" items="${gugunmap}">
-<option value="${gugunmap.gugunCd}" ${gugunCD == gugunmap.gugunCd ? "selected":""} >
-${gugunmap.gugunNm}
-</option>
-</c:forEach>
-</select>
-<input type="text" id="keyword" name="keyword" style="width:150px;height:30px;" placeholder="Search" value="${keyword}"/>
-<button class="bt" type="submit">검색</button>
+<div class="container">
+   <div class="nav-scroller py-1 mb-2">
+      <nav class="nav d-flex justify-content-between">
+         <a class="p-2 link-secondary" href="#">병원게시판</a> <a
+            class="p-2 link-secondary" href="#">공유게시판</a> <a
+            class="p-2 link-secondary" href="#">유기동물게시판</a>
+      </nav>
+   </div>
 </div>
-</form>
+
+<div class="search">
+   <label for="cateCodeA"></label><p></p><input type="hidden" id="cateCodeA" name="cateCodeA" class="data"><p></p>
+      <form action ="/pagelist" method="get" onsubmit="return Searchsido();">
+      <input type="hidden" id="pageNum" name="pageNum" value="${pageNum}">
+         <div class="cate_wrap">
+            <select class="form-select" name="code" id="code" style="width:133px;height:40px;">
+               <option selected value='none'>시/도 선택</option>
+            <c:forEach var="codemap" items="${codemap}">
+               <option value="${codemap.code}" ${code == codemap.code ? "selected":""}>
+               ${codemap.sidoNm}
+               </option>
+            </c:forEach>
+            </select>
+            
+            <select class="form-select" name="gugunCD"  style="width:133px;height:40px;"  id="gugunCD" >
+               <option value='none'>군/구 선택</option>
+            <c:forEach var="gugunmap" items="${gugunmap}">
+               <option value="${gugunmap.gugunCd}" ${gugunCD == gugunmap.gugunCd ? "selected":""} >
+               ${gugunmap.gugunNm}
+               </option>
+            </c:forEach>
+            </select>
+         <input type="text" id="keyword" name="keyword" style="width:150px;height:40px;" placeholder="Search" value="${keyword}"/>
+         <button class="btn btn-secondary" type="submit" >검색</button>
+         </div>
+      </form>
+</div>
 
 <script>
    let codeList = JSON.parse('${codeList}');
@@ -62,8 +81,8 @@ ${gugunmap.gugunNm}
    let cate1Obj = new Object();
    let cate2Obj = new Object();
    
-   let cateSelect1 = $(".cate1");      
-   let cateSelect2 = $(".cate2");
+   let cateSelect1 = $("#code");      
+   let cateSelect2 = $("#gugunCD");
    
    /* 카테고리 배열 초기화 메서드 */
    
@@ -104,7 +123,7 @@ for(let i = 0; i < codeList.length; i++){
    
    /* 대분류 <option> 태그 */
    for(let i = 0; i < cate1Array.length; i++){
-	   //cateSelect1.append("<option value='"+cate1Array[i].code+"'>" + cate1Array[i].sidoNm + "</option>");
+      //cateSelect1.append("<option value='"+cate1Array[i].code+"'>" + cate1Array[i].sidoNm + "</option>");
    }
    
    /* 중분류 <option> 태그 */
@@ -117,8 +136,8 @@ for(let i = 0; i < codeList.length; i++){
    
       for(let i = 0; i < cate2Array.length; i++){
          if(selectVal1 == cate2Array[i].parent){
-        	 cateSelect2.append("<option value='"+cate2Array[i].gugunCd+"'>" + cate2Array[i].gugunNm + "</option>")
-        	 	
+            cateSelect2.append("<option value='"+cate2Array[i].gugunCd+"'>" + cate2Array[i].gugunNm + "</option>")
+               
             //cateSelect2.append("<option value='"+cate2Array[i].gugunCd+"'>" + cate2Array[i].gugunNm + "</option>")
             //location.href = "/test/code?gugunCD="+cate2Array[i].gugunCd;
          }
@@ -126,16 +145,27 @@ for(let i = 0; i < codeList.length; i++){
    });
    
    $(cateSelect2).on("change",function(){
-	      let selectVal2 = $(this).find("option:selected").val();
-	      
-	 });   
+         let selectVal2 = $(this).find("option:selected").val();
+         
+    });   
    
 
    
  
 </script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+<script type="text/javascript">
+   function Searchsido(){
+      if($("#code").val() == 'none'){
+         alert('시/도 를 선택해주세요.');
+         return false;
+      }   
+      
+      
+   }
+</script>
 
-<div>
+<div class="container">
 
 <table class="table table-hover">
   <thead>
@@ -149,17 +179,17 @@ for(let i = 0; i < codeList.length; i++){
 <c:set var="texts" value="${gugunCD}"/>
 <c:forEach begin="${page.start-1}" end="${page.end-1}" var="l" items="${list}" >
 <c:set var="i" value="${i+1 }"/>
-<div>
+
 
   <tbody>
     <tr class="table-light">
       <th scope="row">${i}</th>
-      <td><a class="name" href="/test/detail?mgtno=${l.MGTNO}">${l.BPLCNM}</a></td>
+      <td><a class="name" href="/detail?mgtno=${l.MGTNO}">${l.BPLCNM}</a></td>
       <td>${l.SITEWHLADDR}</td>
     </tr>
 
 </c:forEach>
-</div>
+
 </tbody>
                   
 
@@ -170,37 +200,35 @@ for(let i = 0; i < codeList.length; i++){
 <div>
   <ul class="pagination">
      <li class="page-item">
-     	<c:if test="${page.prev}">
-      <a class="page-link" href="/test/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${page.startPage-1}">&laquo;</a>
-     	</c:if>
+        <c:if test="${page.prev}">
+      <a class="page-link" href="/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${page.startPage-1}">&laquo;</a>
+        </c:if>
     </li>
   
     <c:forEach begin="${page.startPage}" end="${page.endPage}" var="num">
 <c:choose>
     <c:when test="${page.nowPage==num}">
     <li class="page-item active">
-      <a class="page-link" href="/test/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${num}">${num}</a>
+      <a class="page-link" href="/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${num}">${num}</a>
     </li>
     </c:when>
     <c:otherwise>
     <li class="page-item">
-      <a class="page-link" href="/test/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${num}">${num}</a>
+      <a class="page-link" href="/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${num}">${num}</a>
     </li>
     </c:otherwise>
     
 </c:choose>
  </c:forEach>
      <li class="page-item">
-     	<c:if test="${page.next}">
-      <a class="page-link" href="/test/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${page.endPage+1}">&raquo;</a>
-     	</c:if>
+        <c:if test="${page.next}">
+      <a class="page-link" href="/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${page.endPage+1}">&raquo;</a>
+        </c:if>
     </li>
   </ul>
 
 </div>
 
-
-  </ul>
 </div>                                   
                     
                          
