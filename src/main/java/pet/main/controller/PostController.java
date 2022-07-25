@@ -84,7 +84,7 @@ public class PostController {
 	@PostMapping("/board")
 	@ResponseBody
 	public Map<String, Boolean> board(
-			@SessionAttribute(name = "id", required = false) @RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
+			@RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
 			HttpServletRequest request, PostVO post) {
 		Map<String, Boolean> map = new HashMap<>();
 		boolean added = svc.board(mfiles, request, post);
@@ -140,20 +140,20 @@ public class PostController {
 //	게시판 수정화면보기
 	
 	@GetMapping("/detail")
-	public String detailBoard(@SessionAttribute(name = "id", required = false) String uid, @RequestParam int num,
+	public String detailBoard(String uid, @RequestParam int num,
 			Model model) { // 일치시켜주면 // 들어감
 		PostVO post = svc.detailNum(num);
 		model.addAttribute("post", post);
 		rService.updateViewCnt(post.getNum()); // 게시판 조회수증가
-		String s = "scott"; // 임의의 uid
-		model.addAttribute("uid", s); // 현재 접속자의 uid 
+//		String s = "scott"; // 임의의 uid
+//		model.addAttribute("uid", s); // 현재 접속자의 uid 
 		List<ReplyVO> replyList = rService.getReplyList(post.getNum()); // 해당 게시판의 댓글리스트를 불러온다
 		model.addAttribute("replyList", replyList); // 댓글리스트
 		return "post/detail";
 	}
 
 	@GetMapping("/edit")
-	public String detailedit(@SessionAttribute(name = "id", required = false) @RequestParam int num,
+	public String detailedit(@RequestParam int num,
 			Model model) {
 		PostVO post = svc.detailNum(num);
 		model.addAttribute("post", post);
@@ -164,7 +164,7 @@ public class PostController {
 	@PostMapping("/update")
 	@ResponseBody
 	public Map<String, Boolean> updateBoard(
-			@SessionAttribute(name = "id", required = false) @RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
+			@RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
 			HttpServletRequest request, PostVO post, @RequestParam("delfiles") List<String> delfiles, Model model) {
 		Map<String, Boolean> map = new HashMap<>();
 		boolean updated = svc.updated(request, post, mfiles, delfiles);

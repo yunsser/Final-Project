@@ -4,7 +4,11 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ include file="/WEB-INF/jsp/layout/headerSearch.jsp"%>
-<sec:authentication property="principal" var="user" />
+
+<sec:authorize access="isAuthenticated()">
+	<sec:authentication property="principal" var="user" />
+</sec:authorize>
+
 <script src="https://use.fontawesome.com/releases/v5.2.0/js/all.js"></script>
 <script
 	src="http://netdna.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.js"></script>
@@ -134,7 +138,7 @@
 		insReply += "</tr>";
 		
 		insReply += "</table>";
-		insReply += "<hr style='margin:0px;'/>";
+		/* insReply += "<hr style='margin:0px;'/>"; */
 		
 		$("#openReply"+idx).hide();    // '답글'버튼 가리기
 		$("#closeReply"+idx).show();   // '닫기'버튼 보이기
@@ -146,7 +150,7 @@
 	function insertNestedRep(idx,depth,screenOrder) {
 		
 		var boardIdx = "${post.num}";
-		var nickname = "${uid}";
+		var nickname = "${user.user.uid}";
 		var content = document.getElementById("content"+idx).value;
 		
 		
@@ -252,171 +256,189 @@ function setThumbnail(event) {
 		}); 
 	}
 </script>
+<style>
+.title {
+	align-items: center;
+	margin-bottom: 2rem;
+	font-size: 26px;
+	margin-top: 1.3rem;
+	color: gray;
+}
+
+.content {
+	padding: 30px 30px 0px 42px;
+	font-size: 18px;
+}
+
+.imagelabel {
+	font-size: 15px;
+	color: gray;
+	margin-top: 5rem;
+	border-bottom: 1px solid #8080803d;
+	width: 100%;
+    margin-bottom: 10px;
+    clear: both;
+    display:table;
+}
+
+.table-info { 
+	--bs-table-bg: #383838;
+	color: #fff;
+	border-color: #ffffff00;
+}
+
+.table>:not(caption)>*>* {
+	border-bottom: none;
+}
+</style>
 <!-- <script>
 var newText = text.replace(/(<([^>]+)>)/ig,"");
 </script> -->
 
 <title>상세보기</title>
 
-<div class="container">
-	<div class="nav-scroller py-1 mb-2">
-		<nav class="nav d-flex justify-content-between">
-			<a class="p-2 link-secondary" href="#">병원게시판</a> <a
-				class="p-2 link-secondary" href="#">공유게시판</a> <a
-				class="p-2 link-secondary" href="#">유기동물게시판</a>
-		</nav>
-	</div>
-</div>
 
+<!-- 글 디테일부분 -->
 <article>
-		<div class="container" role="main">
+	<div class="container" role="main">
 
-			<p>
-			<div name="addForm" id="form">
-				<div class="mb-3">
-					<label for="title">제목</label> <span type="text"
-						class="form-control">${post.title}</span>
-				</div>
+		<div class="d-flex" style="margin-top: 3rem;">
+			<div>카테고리</div>
+			<div>, ${post.category}</div>
+		</div>
+		<br>
+		<div class="d-flex col-12 title">
+			<div class="col-1" style="margin: 0rem 1.2rem 0rem 2rem; width: 80%">
+				${post.title}</div>
+			<div style="width: 20%; font-size: 18px;">${post.author}</div>
+		</div>
+		<div class="col-12 content">
+			<div style="margin-bottom: 4rem;">${post.summernote}</div>
 
-
-				<div class="mb-3">
-					<label for="author">작성자</label> <span class="form-control"
-						name="reg_id" id="reg_id"><input type="hidden"
-						name="author" value="${post.author}"
-						style="border: none; color: gray;" readonly>${post.author}</span>
-				</div>
-
-
-				<div class="mb-3">
-					<label for="category">카테고리</label>
-					<span class="form-control">${post.category}</span>
-				</div>
-				
-				<div class="mb-3">
-					<label for="title">내용</label>
-					<span class="form-control">${post.summernote}</span>
-				</div>
-
-				<div>
-					<!-- class="form-control" -->
-					<label for="content">파일</label>
-
-					<c:choose>
-						<c:when test="${fn:length(post.attach)>0}">
-							<c:forEach var="f" items="${post.attach}">
-								<fmt:formatNumber var="kilo" value="${f.filesize/1024}"
-									maxFractionDigits="0" />
-								<div>
-									<span class="form-control">
-									<a href="/post/file/download/${f.att_num}"><img src="/upload/${f.filename}" width="30%" alt="" class="thumb" style="display: block; margin: auto;"/></a>
-									</span>
-								</div>
-							</c:forEach>
-						</c:when>
-						<c:otherwise>
-							<span class="form-control">첨부파일 없음</span>
-						</c:otherwise>
-					</c:choose>
-				</div>
-			</div>
+			<div class="imagelabel">첨부파일</div>
+			<c:choose>
+				<c:when test="${fn:length(post.attach)>0}">
+					<c:forEach var="f" items="${post.attach}">
+						<fmt:formatNumber var="kilo" value="${f.filesize/1024}"
+							maxFractionDigits="0" />
+						<div>
+							<a href="/post/file/download/${f.att_num}"><img
+								src="/upload/${f.filename}" width="20%" alt="" class="thumb"
+								style="display: inline-block; float: left;"/></a>
+						</div>
+					</c:forEach>
+				</c:when>
+				<c:otherwise>
+					<span>첨부파일 없음</span>
+				</c:otherwise>
+			</c:choose>
+			
+<div style="clear:both;"></div>
 
 			<!-- 수정 목록 버튼 -->
-			<div class="btlistsav">
-					<button type="button" class="btn btn-sm btn-primary"
-						onclick="location.href='/post/edit?num=${post.num}'">수정</button>
-					<button type="button" class="btn btn-sm btn-primary"
-						onclick="location.href=del_board('${post.num}')">삭제</button>
+			<div class="btlistsav" style="margin-top: 5rem; float: right; display: block;">
+				<button type="button" class="btn btn btn-primary"
+					onclick="location.href='/post/edit?num=${post.num}'">수정</button>
+				<button type="button" class="btn btn btn-primary"
+					onclick="location.href=del_board('${post.num}')">삭제</button>
 
-				<button type="button" class="btn btn-sm btn-primary"
+				<button type="button" class="btn btn btn-primary"
 					onclick="location.href='/post/list'">목록</button>
 			</div>
 
 		</div>
-	</article>
-	
-	<br>
-	
-	
-<!-- 댓글 출력 -->
-<div>
-	<div style="width:fit-content; margin:auto; ">
-		<input type="button" class="btn btn-secondary" value="댓글보기" id="showReply">
-	    <input type="button" class="btn btn-secondary" value="댓글숨기기" id="hideReply">
 	</div>
+</article>
+<div style="clear:both;"></div>
 <br>
+
+
+<!-- 댓글 출력 -->
+<div style="margin-top: 2rem;">
+	<div style="width: fit-content; margin: auto;">
+		<input type="button" class="btn btn-secondary" value="댓글보기"
+			id="showReply"> <input type="button"
+			class="btn btn-secondary" value="댓글숨기기" id="hideReply">
+	</div>
+	<br>
 	<div id="reply">
-	<table class="table" id="replyList" style="margin:auto; width:800px;">
-		<tr class="table-info" >
-        	<th style="text-align: center; width:200px;">작성자</th>
-       	 	<th style="text-align: center;">내용</th>
-       		<th style="text-align: center;">작성시간</th>
-        	<th style="text-align: center; width:80px;">답글달기</th>
-      	</tr>
-      
-      <!-- 닉네임과 들여쓰기 처리 -->
-      <c:forEach var="reply" items="${replyList}">  
-			<c:if test="${reply.depth > 0}">  <!-- 대댓글의 경우 하늘색으로 출력 -->
-				<tr class="table-light" style="text-align:left;">
-			</c:if>
-        	<c:if test="${reply.depth <= 0}">
-        		<tr class="table-active" style="text-align:left;">
-	     	   
-       		</c:if>
-          	<c:if test="${reply.depth > 0}">  <!-- 대댓글의 경우 들여쓰기 -->
-            	<td style="text-align:left;">
-              	<c:forEach var="i" begin="1" end="${reply.depth}">&nbsp;&nbsp; </c:forEach>
-					└ ${reply.nickname} 
-          	</c:if>
-         	<c:if test="${reply.depth <= 0}">
-            	<td style="text-align:left;">
-             	 ${reply.nickname} 
-          	</c:if>
-          	<c:if test="${reply.content != '삭제된 댓글' && reply.nickname eq uid}">
-            	<a href="javascript:updateReplyForm(${reply.idx}, '${reply.content}', '${reply.nickname}')">
-            		<i class="fa fa-eraser" aria-hidden="true"></i></a>
-          		<a href="javascript:deleteReply(${reply.idx})"><i class="fa fa-times" aria-hidden="true"></i></a>
-          	</c:if>
-          	
-          
-          
-	          <!-- 댓글내용 -->
-	          <td style="text-align:left;">${reply.content}
-	        	  <div id="updateReplyBox${reply.idx}"></div>
-	          </td>
-	       	 	 
-	          	
-	          <!-- 작성일 -->
-	          <td style="text-align:left; text-align: center;">${reply.date}</td>
-	          
-	          
-	          <!-- 버튼처리 -->
-	          <td style="text-align: center;">
-	          	<a href="javascript:insertNestedRepForm('${reply.idx}','${reply.depth}','${reply.screenOrder}','${reply.nickname}','${uid}')">
-	          	<i class="fa fa-plus-square" aria-hidden="true"></i></a>
-	          </td>
-	    <tr>
-	    	<td><div id="replyBox${reply.idx}"></div></td>
-        </tr>
-      	</c:forEach>
-    </table>
- 	</div>
+		<table class="table" id="replyList" style="margin: auto; width: 70%;">
+			<tr class="table-info">
+				<th style="text-align: center; width: 20%;">작성자</th>
+				<th style="text-align: center; width: 50%;">내용</th>
+				<th style="text-align: center; width: 20%;">작성시간</th>
+				<th style="text-align: center; width: 10%;">답글달기</th>
+			</tr>
+
+			<!-- 닉네임과 들여쓰기 처리 -->
+
+			<c:forEach var="reply" items="${replyList}">
+				<c:if test="${reply.depth > 0}">
+					<!-- 대댓글의 경우 하늘색으로 출력 -->
+					<tr class="table-light" style="text-align: left;">
+				</c:if>
+				<c:if test="${reply.depth <= 0}">
+					<tr class="table-active" style="text-align: left;">
+				</c:if>
+				<c:if test="${reply.depth > 0}">
+					<!-- 대댓글의 경우 들여쓰기 -->
+					<td style="text-align: left;"><c:forEach var="i" begin="1"
+							end="${reply.depth}">&nbsp;&nbsp; </c:forEach> └
+						${reply.nickname}
+				</c:if>
+				<c:if test="${reply.depth <= 0}">
+					<td style="text-align: left;">${reply.nickname}
+				</c:if>
+				<c:if
+					test="${reply.content != '삭제된 댓글' && reply.nickname eq user.user.uid}">
+					<a
+						href="javascript:updateReplyForm(${reply.idx}, '${reply.content}', '${reply.nickname}')">
+						<i class="fa fa-eraser" aria-hidden="true"></i>
+					</a>
+					<a href="javascript:deleteReply(${reply.idx})"><i
+						class="fa fa-times" aria-hidden="true"></i></a>
+				</c:if>
+
+
+
+				<!-- 댓글내용 -->
+				<td style="text-align: left;">${reply.content}
+					<div id="updateReplyBox${reply.idx}"></div>
+				</td>
+
+
+				<!-- 작성일 -->
+				<td style="text-align: left; text-align: center;">${reply.date}</td>
+
+
+				<!-- 버튼처리 -->
+				<td style="text-align: center;"><a
+					href="javascript:insertNestedRepForm('${reply.idx}','${reply.depth}','${reply.screenOrder}','${reply.nickname}','${user.user.uid}')">
+						<i class="fa fa-plus-square" aria-hidden="true"></i>
+				</a></td>
+				<tr>
+					<td><div id="replyBox${reply.idx}"></div></td>
+				</tr>
+			</c:forEach>
+
+		</table>
+	</div>
 </div>
 
 <br>
 
-	<form id="re">
-		<table style="width:800px; margin:auto;">
-			<tr>
-				<td>
-		            <label for="content">댓글 작성자</label> &nbsp;
-		            <input type="text" name="nickname" value=${uid } readonly/>
-		            <input type="hidden" name=boardIdx value="${post.num }">
-		            <textarea rows="2" name="content" id="content" class="form-control"></textarea>
-			        <input type="button" class="btn btn-primary" value="댓글 달기" onclick="insertReply()"/>
-	        	</td>
-	      	</tr>
-	    </table>
-	    <input type="hidden" name="boardIdx" value="${post.num}"/>
-	</form>
+<form id="re">
+	<table style="width: 70%; margin: auto;">
+		<tr>
+			<td><label for="content">댓글 작성자</label> &nbsp; <input
+				type="text" name="nickname" value=${user.user.uid } readonly /> <input
+				type="hidden" name=boardIdx value="${post.num }"> <textarea
+					rows="2" name="content" id="content" class="form-control"></textarea>
+				<input type="button" class="btn btn-primary" value="댓글 달기"
+				onclick="insertReply()" /></td>
+		</tr>
+	</table>
+	<input type="hidden" name="boardIdx" value="${post.num}" />
+</form>
 </body>
 </html>

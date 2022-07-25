@@ -3,7 +3,7 @@ package pet.main.vo;
 import lombok.Data;
 
 @Data
-public class TestVO {
+public class HomeVO {
 	
 	private String ANIMAL_NO;
 	private String PHOTO_KND;

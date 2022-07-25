@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ include file="/WEB-INF/jsp/layout/headerSearch.jsp"%>
+
 <sec:authentication property="principal" var="user" />
 
 
@@ -23,8 +24,8 @@
 <!-- include summernote-ko-KR -->
 <script src="/resources/js/summernote-ko-KR.js"></script>
 <style>
-form {
-	width: 70%;
+#addform {
+	width: 62%;
 	margin: auto;
 }
 </style>
@@ -74,7 +75,7 @@ form {
 			return false;
 		}
 
-		var formData = new FormData($("#form")[0]);
+		var formData = new FormData($("#addform")[0]);
 
 		$.ajax({
 			url : '/post/board',
@@ -127,17 +128,7 @@ form {
 </script>
 
 
-<div class="container">
-	<div class="nav-scroller py-1 mb-2">
-		<nav class="nav d-flex justify-content-between">
-			<a class="p-2 link-secondary" href="#">병원게시판</a> <a
-				class="p-2 link-secondary" href="#">공유게시판</a> <a
-				class="p-2 link-secondary" href="#">유기동물게시판</a>
-		</nav>
-	</div>
-</div>
-
-<form name="addform" id="form" role="form" method="post" onsubmit="return add();" enctype="multipart/form-data">
+<form name="addform" id="addform" role="form" method="post" onsubmit="return add();" enctype="multipart/form-data">
 
 	<div class="form-group row">
 		<label for="select" class="col-sm-2 col-form-label"
@@ -186,7 +177,7 @@ form {
 			style="font-size: 19px;">작성자</label>
 		<div class="col-sm-10">
 			<input type="text" class="form-control" id="author" name="author"
-				placeholder="${uid}">
+				value="${user.user.uid}" readonly>
 			<!-- readonly -->
 		</div>
 	</div>

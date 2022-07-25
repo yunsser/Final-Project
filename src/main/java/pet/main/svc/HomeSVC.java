@@ -19,7 +19,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import pet.main.vo.TestVO;
+import pet.main.vo.HomeVO;
 
 @Service
 public class HomeSVC {
@@ -35,9 +35,9 @@ public class HomeSVC {
 		return result;
 	}
 
-	public List<TestVO> list() {
+	public List<HomeVO> list() {
 
-		List<TestVO> list = new ArrayList();
+		List<HomeVO> list = new ArrayList();
 
 		StringBuffer result = new StringBuffer();
 		String urlstr = "http://openapi.seoul.go.kr:8088/" + "6e6e7175586c7975313233456c584e71/"
@@ -88,7 +88,7 @@ public class HomeSVC {
 					String PHOTO_KND = (String) info.get("PHOTO_KND");
 					String PHOTO_NO = String.valueOf(info.get("PHOTO_NO"));
 					String PHOTO_URL = (String) info.get("PHOTO_URL");
-					TestVO data = new TestVO();
+					HomeVO data = new HomeVO();
 					// System.out.println("키워드있을 때");
 					data.setANIMAL_NO(ANIMAL_NO.replace(".0", ""));
 					data.setPHOTO_KND(PHOTO_KND);
