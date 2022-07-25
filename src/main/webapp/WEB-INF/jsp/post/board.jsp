@@ -3,6 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ include file="/WEB-INF/jsp/layout/headerSearch.jsp"%>
+
 <sec:authentication property="principal" var="user" />
 
 
@@ -23,8 +24,8 @@
 <!-- include summernote-ko-KR -->
 <script src="/resources/js/summernote-ko-KR.js"></script>
 <style>
-form {
-	width: 70%;
+#addform {
+	width: 62%;
 	margin: auto;
 }
 </style>
@@ -41,10 +42,6 @@ form {
 		        // 에디터에 커서 이동 (input창의 autofocus라고 생각)
 		        focus : true,
 		        toolbar: [
-		            // 글꼴 설정
-		            ['fontname', ['fontname']],
-		            // 글자 크기 설정
-		            ['fontsize', ['fontsize']],
 		            // 굵기, 기울임꼴, 밑줄,취소 선, 서식지우기
 		            ['style', ['bold', 'italic', 'underline','strikethrough', 'clear']],
 		            // 글자색
@@ -53,15 +50,13 @@ form {
 		            ['table', ['table']],
 		            // 글머리 기호, 번호매기기, 문단정렬
 		            ['para', ['ul', 'ol', 'paragraph']],
+		            // 글자 크기 설정
+		            ['fontsize', ['fontsize']],
 		            // 줄간격
 		            ['height', ['height']],
 		            // 코드보기, 확대해서보기, 도움말
 		            ['view', ['codeview','fullscreen', 'help']]
 		        ],
-		        // 추가한 글꼴
-		        fontNames: ['Arial', 'Arial Black', 'Comic Sans MS', 'Courier New','맑은 고딕','궁서','굴림체','굴림','돋음체','바탕체'],
-		        // 추가한 폰트사이즈
-		        fontSizes: ['8','9','10','11','12','14','16','18','20','22','24','28','30','36','50','72']
 
 		    });
 	})
@@ -74,7 +69,7 @@ form {
 			return false;
 		}
 
-		var formData = new FormData($("#form")[0]);
+		var formData = new FormData($("#addform")[0]);
 
 		$.ajax({
 			url : '/post/board',
@@ -127,17 +122,7 @@ form {
 </script>
 
 
-<div class="container">
-	<div class="nav-scroller py-1 mb-2">
-		<nav class="nav d-flex justify-content-between">
-			<a class="p-2 link-secondary" href="#">병원게시판</a> <a
-				class="p-2 link-secondary" href="#">공유게시판</a> <a
-				class="p-2 link-secondary" href="#">유기동물게시판</a>
-		</nav>
-	</div>
-</div>
-
-<form name="addform" id="form" role="form" method="post" onsubmit="return add();" enctype="multipart/form-data">
+<form name="addform" id="addform" role="form" method="post" onsubmit="return add();" enctype="multipart/form-data">
 
 	<div class="form-group row">
 		<label for="select" class="col-sm-2 col-form-label"
@@ -186,7 +171,7 @@ form {
 			style="font-size: 19px;">작성자</label>
 		<div class="col-sm-10">
 			<input type="text" class="form-control" id="author" name="author"
-				placeholder="${uid}">
+				value="${user.user.uid}" readonly>
 			<!-- readonly -->
 		</div>
 	</div>

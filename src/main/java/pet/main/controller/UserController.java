@@ -1,6 +1,7 @@
 package pet.main.controller;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,8 +21,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
+import pet.main.dao.PostDAO;
 import pet.main.security.model.PrincipalDetails;
+import pet.main.svc.HomeSVC;
 import pet.main.svc.IUserSVC;
+import pet.main.svc.PostSVC;
+import pet.main.vo.HomeVO;
+import pet.main.vo.PagingVO;
 import pet.main.vo.UserVO;
 
 @Controller
@@ -31,9 +37,36 @@ public class UserController {
 	@Autowired
 	private IUserSVC svc;
 	
+	@Autowired
+	HomeSVC homesvc;
+
+	@Autowired
+	PostDAO postdao;
+
+	@Autowired
+	PostSVC postsvc;
+
 	// 인덱스 페이지 이동.
-	@RequestMapping({"", "/"})
-	public String index() {
+	@RequestMapping({ "", "/" })
+	public String index(Model model, PagingVO vo, @RequestParam(value = "nowPage", required = false) String nowPage,
+			@RequestParam(value = "cntPerPage", required = false) String cntPerPage) {
+		List<HomeVO> list = homesvc.list();
+		model.addAttribute("list", list); // 유기동물 사진
+
+		int total = postsvc.count();
+		if (nowPage == null && cntPerPage == null) {
+			nowPage = "1";
+			cntPerPage = "5";
+		} else if (nowPage == null) {
+			nowPage = "1";
+		} else if (cntPerPage == null) {
+			cntPerPage = "5";
+		}
+		List<Map<String, String>> list2 = postdao.getBoard();
+		model.addAttribute("list2", list2);
+		vo = new PagingVO(total, Integer.parseInt(nowPage), Integer.parseInt(cntPerPage));
+		model.addAttribute("paging", vo);
+		model.addAttribute("viewAll", postsvc.select(vo));
 		return "index";
 	}
 	
