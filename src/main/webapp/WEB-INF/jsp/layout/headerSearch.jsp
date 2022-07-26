@@ -83,7 +83,7 @@
 	<div class="nav-scroller py-1 mb-2">
 		<nav class="nav d-flex justify-content-between">
 			<a class="p-2 link-secondary" href="http://localhost/search">병원게시판</a> 
-			<a class="p-2 link-secondary" href="#">카페식당게시판</a> <a
+			<a class="p-2 link-secondary" href="http://localhost/shfclist">카페식당게시판</a> <a
 				class="p-2 link-secondary" href="http://localhost/post/list">공유게시판</a> <a
 				class="p-2 link-secondary" href="https://animal.seoul.go.kr/index">서울동물복지지원센터</a>
 		</nav>

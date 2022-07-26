@@ -45,19 +45,25 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 
+import pet.main.dao.ReviewDAO;
 import pet.main.dao.TestDAO;
 import pet.main.vo.CodeVO;
 import pet.main.vo.CsvTestVO;
 
 import pet.main.vo.PageVO;
+import pet.main.vo.ReviewVO;
 import pet.main.vo.Seoul_hp_VO;
 
 @Service
 public class TestSVC {
 	
-	@Autowired TestDAO dao;
+	@Autowired
+	TestDAO dao;
+	@Autowired
+	ReviewDAO reviewdao;
 	
-
+	
+	//서울리스트 받아오기
    public List<Seoul_hp_VO> getSeoullist(){
       
         // 1. url 주소 만들기(끝)
@@ -120,6 +126,7 @@ public class TestSVC {
                 
     }
    
+   // 서울리스트 받아오기(행정코드,키워드,구군코드)
    public List<Seoul_hp_VO> getSeoullist(String code, String keyword, String gugunCD){
 		
 		List<Seoul_hp_VO> list = new ArrayList();
@@ -303,162 +310,12 @@ public class TestSVC {
 		return list;
    }
    
-   public List<Seoul_hp_VO> getSeoullistpage(String keyword, String gugunCD, int startPage, int endPage){
-		
-		List<Seoul_hp_VO> list = new ArrayList();
-		//System.out.println("키워드:" + keyword);
-		//System.out.println("코드:" + gugunCD);
-		
-		StringBuffer result = new StringBuffer();
-		String urlstr = "http://openapi.seoul.go.kr:8088/"
-				+ "5a516a7a63736e653130324d44456563/"  // 인증키
-				+ "json/LOCALDATA_020301/1/1000/";    //json/데이터/시작번호/끝번호
-		
-		URL url;
-		try {
-			url = new URL(urlstr);
-			
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-			urlConnection.setRequestMethod("GET");
-			
-			BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-			
-			String returnLine;
-			
-			
-			result.append("<xmp>");
-			while((returnLine = br.readLine()) != null) {
-				result.append(returnLine + "\n");
-				
-
-				JSONParser jsonParser = new JSONParser();
-				JSONObject jsonObject = (JSONObject)jsonParser.parse(returnLine);
-				JSONObject hospitalResult = (JSONObject)jsonObject.get("LOCALDATA_020301");
-				//System.out.println(hospitalResult);
-				long list_total_count = (long)hospitalResult.get("list_total_count");
-				//JSONObject print_result = (JSONObject)hospitalResult.get("RESULT");
-				System.out.println("전체데이터 수"+ list_total_count);
-
-				
-				JSONArray rows = (JSONArray)hospitalResult.get("row");
-
-				
-					for(int i = 0; i<rows.size();i++) {
-						JSONObject info = (JSONObject)rows.get(i);
-						//System.out.println(info);
-						
-						String OPNSFTEAMCODE = (String) info.get("OPNSFTEAMCODE");
-						String TRDSTATEGBN = (String) info.get("TRDSTATEGBN");
-						String TRDSTATENM = (String) info.get("TRDSTATENM");
-						String BPLCNM = (String) info.get("BPLCNM");
-						String STIETEL = (String) info.get("SITETEL");
-						String SITEWHLADDR = (String) info.get("SITEWHLADDR");
-						String RDNWHLADDR = (String) info.get("RDNWHLADDR");
-						String X = (String) info.get("X");
-						String Y = (String) info.get("Y");
-						//System.out.println("서비스");
-						
-						
-					
-						
-						if(gugunCD.length()!=0 && keyword.length()==0 && OPNSFTEAMCODE.equals(gugunCD)) {
-							Seoul_hp_VO data = new Seoul_hp_VO();
-							//System.out.println("시군구검색");
-							//System.out.println("코드"+OPNSFTEAMCODE);
-							data.setList_total_count(list_total_count);
-							data.setOPNSFTEAMCODE(OPNSFTEAMCODE);
-							data.setTRDSTATEGBN(TRDSTATEGBN);
-							data.setTRDSTATENM(TRDSTATENM);
-							data.setBPLCNM(BPLCNM);
-							data.setSITETEL(STIETEL);
-							data.setSITEWHLADDR(SITEWHLADDR);
-							data.setRDNWHLADDR(RDNWHLADDR);
-							data.setlocX(X);
-							data.setlocY(Y);
-							
-							list.add(data);
-							//System.out.println(list.get(0).getBPLCNM());
-							//System.out.println("코드검색 시 리스트"+list);
-							//return list;
-							
-						}
-						
-						else if(gugunCD.length()==0 && (BPLCNM.contains(keyword)||STIETEL.contains(keyword)||SITEWHLADDR.contains(keyword)||RDNWHLADDR.contains(keyword)) ) {
-								//System.out.println("gugunCD null");
-								Seoul_hp_VO data2 = new Seoul_hp_VO();
-								//System.out.println("키워드 검색");
-								data2.setList_total_count(list_total_count);
-								data2.setOPNSFTEAMCODE(OPNSFTEAMCODE);
-								//System.out.println(OPNSFTEAMCODE);
-								data2.setTRDSTATEGBN(TRDSTATEGBN);
-								data2.setTRDSTATENM(TRDSTATENM);
-								data2.setBPLCNM(BPLCNM);
-								data2.setSITETEL(STIETEL);
-								data2.setSITEWHLADDR(SITEWHLADDR);
-								data2.setRDNWHLADDR(RDNWHLADDR);
-								data2.setlocX(X);
-								data2.setlocY(Y);
-								
-								list.add(data2);
-								//System.out.println("키워드검색시 리스트" + list);
-								//return list;
-							
-						}
-						
-						else if(gugunCD.length()==0 && keyword.length()==0){
-							//System.out.println("둘다null");
-							Seoul_hp_VO vo = new Seoul_hp_VO();
-							vo.setList_total_count(list_total_count);
-							vo.setOPNSFTEAMCODE(OPNSFTEAMCODE);
-							vo.setTRDSTATEGBN(TRDSTATEGBN);
-							vo.setTRDSTATENM(TRDSTATENM);
-							vo.setBPLCNM(BPLCNM);
-							vo.setSITETEL(STIETEL);
-							vo.setSITEWHLADDR(SITEWHLADDR);
-							vo.setRDNWHLADDR(RDNWHLADDR);
-							vo.setlocX(X);
-							vo.setlocY(Y);
-							
-							list.add(vo);
-							
-						}
-						
-						else if(OPNSFTEAMCODE.equals(gugunCD) && (BPLCNM.contains(keyword)||STIETEL.contains(keyword)||SITEWHLADDR.contains(keyword)||RDNWHLADDR.contains(keyword))) {
-							Seoul_hp_VO data3 = new Seoul_hp_VO();
-							data3.setList_total_count(list_total_count);
-							data3.setOPNSFTEAMCODE(OPNSFTEAMCODE);
-							data3.setTRDSTATEGBN(TRDSTATEGBN);
-							data3.setTRDSTATENM(TRDSTATENM);
-							data3.setBPLCNM(BPLCNM);
-							data3.setSITETEL(STIETEL);
-							data3.setSITEWHLADDR(SITEWHLADDR);
-							data3.setRDNWHLADDR(RDNWHLADDR);
-							data3.setlocX(X);
-							data3.setlocY(Y);
-							
-							list.add(data3);
-						}
-						
-						}
-
-					}
-					
-			
-			urlConnection.disconnect();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//System.out.println(list.get(0).getBPLCNM());
-		//System.out.println("리스트출력 전" + list);
-		return list;
-   }
-   
-   
+   //행정코드 리스트
    public List<CodeVO> codeList() {
 	      return dao.codeList();
 	      }
    
+   //행정코드 리스트 맵
    public List<CodeVO> codeListMap(){
 	   List<CodeVO> list = dao.codeList();
 	   List<CodeVO> list2 = new ArrayList<>();
@@ -487,7 +344,7 @@ public class TestSVC {
 	   return list2;
    }
    
-   
+   //구군코드 리스트 맵
    public List<CodeVO> gugunListMap(String code){
 	   List<CodeVO> list = dao.codeList();
 	   List<CodeVO> list2 = new ArrayList<>();
@@ -517,16 +374,14 @@ public class TestSVC {
 	   return list2;
    }
    
-   
-   
-
-   
+   // 서울리스트 갯수
    public int countSeoulList(String code, String keyword, String gugunCD) {
 	      List<Seoul_hp_VO> list = getSeoullist(code, keyword, gugunCD);
 	      int count = list.size();
 	      return count;
 	   }
-	   
+
+   //서울리스트 페이징
    public List<Seoul_hp_VO> selectSeoulList(PageVO vo, String code, String keyword, String gugunCD){
       List<Seoul_hp_VO> list = getSeoullist(code, keyword, gugunCD);
       //System.out.println(list);
@@ -537,12 +392,14 @@ public class TestSVC {
       return list;
    }
    
+   //csv리스트 갯수
    public int countCSVList(String code, String keyword, String gugunCD) {
 	      List<CsvTestVO> list = csvList(code, keyword, gugunCD);
 	      int count = list.size();
 	      return count;
 	   }
-	   
+	
+   //csv리스트 페이징
 	public List<CsvTestVO> selectCsvList(PageVO vo, String code, String keyword, String gugunCD){
 		List<CsvTestVO> list = csvList(code, keyword, gugunCD);
 		vo = new PageVO();
@@ -611,227 +468,6 @@ public class TestSVC {
    }
 	
 	
-	public List<Seoul_hp_VO> info(){
-		
-		List<Seoul_hp_VO> list = new ArrayList();
-		
-		StringBuffer result = new StringBuffer();
-		String urlstr = "http://openapi.seoul.go.kr:8088/"
-				+ "5a516a7a63736e653130324d44456563/"  // 인증키
-				+ "json/LOCALDATA_020301/1/1/";    //json/데이터/시작번호/끝번호
-		
-		URL url;
-		try {
-			url = new URL(urlstr);
-			
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-			urlConnection.setRequestMethod("GET");
-			
-			BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-			
-			String returnLine;
-			
-			
-			result.append("<xmp>");
-			while((returnLine = br.readLine()) != null) {
-				result.append(returnLine + "\n");
-				
-				//System.out.println(returnLine);
-				
-				
-				
-				JSONParser jsonParser = new JSONParser();
-				JSONObject jsonObject = (JSONObject)jsonParser.parse(returnLine);
-				JSONObject hospitalResult = (JSONObject)jsonObject.get("LOCALDATA_020301");
-				//System.out.println(hospitalResult);
-				//String list_total_count = (String)hospitalResult.get("list_total_count");
-				//JSONObject print_result = (JSONObject)hospitalResult.get("RESULT");
-				//System.out.println("전체데이터 수"+ list_total_count);
-				
-				JSONArray rows = (JSONArray)hospitalResult.get("row");
-				//System.out.println(rows);
-				
-				for(int i = 0; i<rows.size();i++) {
-					JSONObject info = (JSONObject)rows.get(i);
-					//System.out.println(info);
-					Seoul_hp_VO data = new Seoul_hp_VO();
-					data.setBPLCNM((String) info.get("BPLCNM"));
-					data.setSITETEL((String) info.get("SITETEL"));
-					data.setSITEWHLADDR((String) info.get("SITEWHLADDR"));
-					data.setRDNWHLADDR((String)info.get("RDNWHLADDR"));
-					data.setlocX((String) info.get("X"));
-					data.setlocY((String) info.get("Y"));
-					//System.out.println("svc data" + data);
-					list.add(data);
-
-					
-				}
-
-	            
-			}
-			urlConnection.disconnect();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		return list;
-		
-	}
-
-	
-	public List<Seoul_hp_VO> Seoul_hp_list(String teamcode, String keyword){
-
-		
-		//System.out.println("코드"+teamcode);
-		List<Seoul_hp_VO> list = new ArrayList();
-		System.out.println("키워드:" + keyword);
-		System.out.println("팀코드:" + teamcode);
-		
-		StringBuffer result = new StringBuffer();
-		String urlstr = "http://openapi.seoul.go.kr:8088/"
-				+ "5a516a7a63736e653130324d44456563/"  // 인증키
-				+ "json/LOCALDATA_020301/1/700/";    //json/데이터/시작번호/끝번호
-		
-		URL url;
-		try {
-			url = new URL(urlstr);
-			
-			HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-			urlConnection.setRequestMethod("GET");
-			
-			BufferedReader br = new BufferedReader(new InputStreamReader(urlConnection.getInputStream(), "UTF-8"));
-			
-			String returnLine;
-			
-			
-			result.append("<xmp>");
-			while((returnLine = br.readLine()) != null) {
-				result.append(returnLine + "\n");
-				
-				//System.out.println(returnLine);
-				
-				JSONParser jsonParser = new JSONParser();
-				JSONObject jsonObject = (JSONObject)jsonParser.parse(returnLine);
-				JSONObject hospitalResult = (JSONObject)jsonObject.get("LOCALDATA_020301");
-				
-				JSONArray rows = (JSONArray)hospitalResult.get("row");
-
-				
-					for(int i = 0; i<rows.size();i++) {
-						JSONObject info = (JSONObject)rows.get(i);
-						//System.out.println(info);
-						
-						String MGTNO = (String) info.get("MGTNO");
-						String OPNSFTEAMCODE = (String) info.get("OPNSFTEAMCODE");
-						String TRDSTATEGBN = (String) info.get("TRDSTATEGBN");
-						String TRDSTATENM = (String) info.get("TRDSTATENM");
-						String BPLCNM = (String) info.get("BPLCNM");
-						String STIETEL = (String) info.get("SITETEL");
-						String SITEWHLADDR = (String) info.get("SITEWHLADDR");
-						String RDNWHLADDR = (String) info.get("RDNWHLADDR");
-						String X = (String) info.get("X");
-						String Y = (String) info.get("Y");
-						//System.out.println("서비스");
-						
-						
-					
-						
-						if(teamcode !=null && keyword.length()==0 && OPNSFTEAMCODE.equals(teamcode)) {
-							Seoul_hp_VO data = new Seoul_hp_VO();
-							//System.out.println("시군구검색");
-							//System.out.println("코드"+OPNSFTEAMCODE);
-							data.setMGTNO(MGTNO);
-							data.setOPNSFTEAMCODE(OPNSFTEAMCODE);
-							data.setTRDSTATEGBN(TRDSTATEGBN);
-							data.setTRDSTATENM(TRDSTATENM);
-							data.setBPLCNM(BPLCNM);
-							data.setSITETEL(STIETEL);
-							data.setSITEWHLADDR(SITEWHLADDR);
-							data.setRDNWHLADDR(RDNWHLADDR);
-							data.setlocX(X);
-							data.setlocY(Y);
-							
-							list.add(data);
-							System.out.println(list.get(0).getBPLCNM());
-							System.out.println("코드검색 시 리스트"+list);
-							//return list;
-							
-						}
-						
-						else if(teamcode.length()==0 && (BPLCNM.contains(keyword)||STIETEL.contains(keyword)||SITEWHLADDR.contains(keyword)||RDNWHLADDR.contains(keyword)) ) {
-								System.out.println("teamcode null");
-								Seoul_hp_VO data2 = new Seoul_hp_VO();
-								System.out.println("키워드 검색");
-								data2.setMGTNO(MGTNO);
-								data2.setOPNSFTEAMCODE(OPNSFTEAMCODE);
-								//System.out.println(OPNSFTEAMCODE);
-								data2.setTRDSTATEGBN(TRDSTATEGBN);
-								data2.setTRDSTATENM(TRDSTATENM);
-								data2.setBPLCNM(BPLCNM);
-								data2.setSITETEL(STIETEL);
-								data2.setSITEWHLADDR(SITEWHLADDR);
-								data2.setRDNWHLADDR(RDNWHLADDR);
-								data2.setlocX(X);
-								data2.setlocY(Y);
-								
-								list.add(data2);
-								System.out.println("키워드검색시 리스트" + list);
-								//return list;
-							
-						}
-						
-						else if(teamcode.length()==0 && keyword.length()==0){
-							System.out.println("둘다null");
-							Seoul_hp_VO vo = new Seoul_hp_VO();
-							vo.setMGTNO(MGTNO);
-							vo.setOPNSFTEAMCODE(OPNSFTEAMCODE);
-							vo.setTRDSTATEGBN(TRDSTATEGBN);
-							vo.setTRDSTATENM(TRDSTATENM);
-							vo.setBPLCNM(BPLCNM);
-							vo.setSITETEL(STIETEL);
-							vo.setSITEWHLADDR(SITEWHLADDR);
-							vo.setRDNWHLADDR(RDNWHLADDR);
-							vo.setlocX(X);
-							vo.setlocY(Y);
-							
-							list.add(vo);
-							
-						}
-						
-						else if(OPNSFTEAMCODE.equals(teamcode) && (BPLCNM.contains(keyword)||STIETEL.contains(keyword)||SITEWHLADDR.contains(keyword)||RDNWHLADDR.contains(keyword))) {
-							Seoul_hp_VO data3 = new Seoul_hp_VO();
-							data3.setMGTNO(MGTNO);
-							data3.setOPNSFTEAMCODE(OPNSFTEAMCODE);
-							data3.setTRDSTATEGBN(TRDSTATEGBN);
-							data3.setTRDSTATENM(TRDSTATENM);
-							data3.setBPLCNM(BPLCNM);
-							data3.setSITETEL(STIETEL);
-							data3.setSITEWHLADDR(SITEWHLADDR);
-							data3.setRDNWHLADDR(RDNWHLADDR);
-							data3.setlocX(X);
-							data3.setlocY(Y);
-							
-							list.add(data3);
-						}
-						
-						}
-
-					}
-					
-			
-			urlConnection.disconnect();
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		//System.out.println(list.get(0).getBPLCNM());
-		System.out.println("리스트출력 전" + list);
-		return list;
-		
-	}
-	
-	
   	 // tag값의 정보를 가져오는 함수
 	private static String getTagValue(String tag, Element eElement) {
 	    NodeList nlList = eElement.getElementsByTagName(tag).item(0).getChildNodes();
@@ -841,6 +477,7 @@ public class TestSVC {
 	    return nValue.getNodeValue();
 	}
 
+	// 서울 디테일
 	public Seoul_hp_VO detail(String mgtno){
        List<Seoul_hp_VO> list = new ArrayList();
       
@@ -910,6 +547,7 @@ public class TestSVC {
                    if(MGTNO.equals(mgtno)) {
                       Seoul_hp_VO detail = new Seoul_hp_VO();
                       detail.setBPLCNM(BPLCNM);
+                      detail.setMGTNO(MGTNO);
                       detail.setSITETEL(STIETEL);
                       detail.setSITEWHLADDR(SITEWHLADDR);
                       detail.setRDNWHLADDR(RDNWHLADDR);
@@ -926,6 +564,7 @@ public class TestSVC {
       return null;
    }
 	
+	// csv리스트
 	public List<CsvTestVO> csvList(){
 	      BufferedReader br = null;
 	      try {
@@ -959,6 +598,7 @@ public class TestSVC {
 	      return null;
 	   }
 	
+	// csv리스트(행정코드, 키워드, 구군코드)
 	public List<CsvTestVO> csvList(String code, String keyword, String gugunCD){
 	      BufferedReader br = null;
 	      List<CsvTestVO> list = new ArrayList<>();
@@ -1077,6 +717,7 @@ public class TestSVC {
 	      return null;
 	   }
 
+	// csv 디테일
 	public CsvTestVO csvdetail(String mgtno) {
 	      
 	      List<CsvTestVO> list = csvList();
@@ -1099,6 +740,39 @@ public class TestSVC {
 	      return null;
 	   }
 	
+	// 병원 리뷰 리스트 출력
+	public List<ReviewVO> getReviewList(String mgtno){
+		List<ReviewVO> reviewlist = reviewdao.getReviewList(mgtno);
+		return reviewlist;
+	}
+	
+	
+	// 병원 리뷰 등록
+	public boolean addReview(ReviewVO review) {
+		return reviewdao.addReview(review);
+	}
+	
+	// 병원리뷰 갯수
+	public int getReviewTotal(String mgtno) {
+		return reviewdao.getReviewTotal(mgtno);
+	}
+	
+	// 병원 리뷰 페이징
+	public PageInfo<ReviewVO> reviewpaging(int pageNum, String mgtno){
+		PageHelper.startPage(pageNum,5);
+		PageInfo<ReviewVO> pageInfo = new PageInfo<>(reviewdao.getReviewList(mgtno),5);
+		return pageInfo;
+	}
+	
+	// 병원 리뷰 삭제
+	public boolean deleteReview(int rv_num) {
+		return reviewdao.deleteReview(rv_num);
+	}
+	
+	// 병원 리뷰 수정
+	public boolean updateReview(ReviewVO review) {
+		return reviewdao.updateReview(review);
+	}
 	
 	
 }

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pet.main.mapper.ShareFcMapper">
+
+   <!-- 게시글 목록 -->
+   <select id="ShareFcList"
+      resultType="pet.main.vo.ShareFcVO"
+      parameterType="String">
+      SELECT * FROM
+      (SELECT * FROM share_facility WHERE sh_facCate LIKE CONCAT('%', #{cate} ,'%')) f
+      WHERE f.sh_facSido LIKE CONCAT('%', #{sido} ,'%') and f.sh_facGugun LIKE CONCAT ('%', #{gugun} ,'%')
+      ORDER BY f.sh_num DESC
+   </select>
+   
+   <!-- 게시글 디테일 -->
+   <select id="detailSharefc"
+      resultType="map"
+      parameterType="Integer">
+      SELECT * FROM share_facility f
+      LEFT OUTER JOIN sf_attach a
+      ON
+      f.sh_num = a.shfc_num
+      WHERE f.sh_num=#{sh_num}
+   </select>
+
+   <!-- 리스트 추가 -->
+   <insert id="addShareFc"
+      parameterType="pet.main.vo.ShareFcVO"
+      useGeneratedKeys="true" keyProperty="sh_num">
+      INSERT INTO share_facility
+      VALUES(null, #{sh_name}, #{sh_title}, #{sh_content}, NOW(), #{sh_facSido}, #{sh_facGugun}, #{sh_facNM}, #{sh_facRoadAdd}, #{sh_facAdd}, #{sh_facTel}, #{sh_facCate}, #{sh_count})
+   </insert>
+   
+   <!-- 첨부파일 업로드 -->
+   <insert id="addfile"
+      parameterType="pet.main.vo.Sf_attachVO">
+      INSERT INTO sf_attach
+      VALUES(null, #{shfc_num}, #{filename}, #{filesize})
+   </insert>
+   
+   <!-- 첨부파일 불러오기 -->
+   <select id="getFilename" parameterType="Integer"
+      resultType="String">
+      SELECT filename FROM sf_attach
+      WHERE att_num=#{att_num}
+   </select>
+   
+   <!-- 게시글 수정 -->
+   <update id="updateShareFc"
+      parameterType="pet.main.vo.ShareFcVO">
+      UPDATE share_facility 
+      SET sh_title=#{sh_title}, sh_content=#{sh_content}, sh_date=NOW(), sh_facSido=#{sh_facSido}, sh_facGugun=#{sh_facGugun}, sh_facNM=#{sh_facNM}, sh_facRoadAdd=#{sh_facRoadAdd}, sh_facAdd=#{sh_facAdd},sh_facTel=#{sh_facTel}, sh_facCate=#{sh_facCate}
+      WHERE sh_num=#{sh_num}  
+   </update>
+
+   <!-- 첨부파일 삭제 -->
+   <delete id="deletefile"
+      parameterType="Integer">
+      DELETE FROM sf_attach
+      WHERE att_num=#{att_num}
+   </delete>
+   
+   <!-- 게시글 삭제 -->
+   <delete id="deleteShareFc"
+      parameterType="Integer">
+      DELETE FROM share_facility
+      WHERE sh_num=#{sh_num}
+   </delete>
+   
+   <select id="codeList" resultType="map" parameterType="String">
+      SELECT * FROM sf_category
+   </select>
+
+</mapper>

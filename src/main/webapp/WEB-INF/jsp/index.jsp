@@ -82,7 +82,6 @@ ol, ul {padding-left: 0rem;}
 }
 </style>
 
-
 <main class="container">
 
 <!-- 슬라이더 -->

@@ -227,7 +227,6 @@ function kakaopost() {
 }
 </script>
 <!-- 주소 api 끝 -->
-
 <script type="text/javascript">
 
 	// 프로필 사진 업로드 버튼 실행

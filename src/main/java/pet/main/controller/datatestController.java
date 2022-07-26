@@ -1,47 +1,44 @@
 
 package pet.main.controller;
 
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLEncoder;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.tomcat.jni.Buffer;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.autoconfigure.data.web.SpringDataWebProperties.Pageable;
 import org.springframework.stereotype.Controller;
-import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.pagehelper.PageInfo;
 
 import pet.main.svc.TestSVC;
+import pet.main.svc.replyService;
 import pet.main.vo.CsvTestVO;
 import pet.main.vo.PageVO;
+import pet.main.vo.ReplyVO;
+import pet.main.vo.ReviewVO;
 import pet.main.vo.Seoul_hp_VO;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-
 @Controller
-@RequestMapping("/test")
+@RequestMapping("/")
+@SessionAttributes("uid")
 public class datatestController {
 	
 	@Autowired
 	private TestSVC svc;
+	@Autowired
+	private replyService rService;
 	
+	// 동물병원 검색창
 	@GetMapping("/search")
 	public String search(PageVO vo, @RequestParam(required=false, defaultValue="1") int pageNum, @RequestParam(name="keyword", required=false, defaultValue="")String keyword, @RequestParam(name="gugunCD", required=false, defaultValue="")String gugunCD, @RequestParam(name="code", required=false, defaultValue="")String code, Model model) throws JsonProcessingException {
         ObjectMapper objm = new ObjectMapper();
@@ -60,8 +57,9 @@ public class datatestController {
 	}
         
 
-   @GetMapping("/pagelist")
-   public String pagelist(PageVO vo, @RequestParam(required=false, defaultValue="1") int pageNum, @RequestParam(name="keyword", required=false, defaultValue="")String keyword, @RequestParam(name="gugunCD", required=false, defaultValue="")String gugunCD, @RequestParam(name="code", required=false, defaultValue="")String code, Model model) throws JsonProcessingException {
+	// 동물병원 리스트
+	@GetMapping("/pagelist")
+	public String pagelist(PageVO vo, @RequestParam(required=false, defaultValue="1") int pageNum, @RequestParam(name="keyword", required=false, defaultValue="")String keyword, @RequestParam(name="gugunCD", required=false, defaultValue="")String gugunCD, @RequestParam(name="code", required=false, defaultValue="")String code, Model model) throws JsonProcessingException {
          ObjectMapper objm = new ObjectMapper();
          List list = svc.codeList();
          List codemap = svc.codeListMap();
@@ -96,15 +94,55 @@ public class datatestController {
          return "api/codepage";
     }
  
-	
-   @GetMapping("/detail")
-   public String detail(@RequestParam String mgtno, Model model) {
+	// 동물병원 상세보기
+	@GetMapping("/detail")
+	public String detail(@RequestParam(required=false, defaultValue = "1")int pageNum, @RequestParam String mgtno, Model model, @SessionAttribute(name="uid", required=false) String uid) {
       Seoul_hp_VO seouldetail = svc.detail(mgtno);
       CsvTestVO csvdetail = svc.csvdetail(mgtno);
       model.addAttribute("seouldetail", seouldetail);
       model.addAttribute("csvdetail", csvdetail);
+      model.addAttribute("mgtno",mgtno);
+      List<ReviewVO> reviewlist = svc.getReviewList(mgtno);
+      model.addAttribute("reviewlist", reviewlist);
+//      List<ReplyVO> replyList = rService.getReplyList(mgtno);
+      //System.out.println(replyList);
+//      model.addAttribute("replyList", replyList);
+      PageInfo<ReviewVO> pageInfo = svc.reviewpaging(pageNum, mgtno);
+      model.addAttribute("pageInfo",pageInfo);
       return "api/detail";
    }
+	
+	@PostMapping("/detail")
+	@ResponseBody
+	public Map<String, Boolean> addReview(String mgtno, Model model, @SessionAttribute(name="uid", required=false) String uid, ReviewVO review){
+		boolean addReview = svc.addReview(review);
+		model.addAttribute("mgtno",mgtno);
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("addReview", addReview);
+		//System.out.println("저장");
+		return map;
+	}
+	
+	@PostMapping("/detail/delete")
+	@ResponseBody
+	public Map<String, Boolean> deleteReview(@SessionAttribute(name="uid", required=false) String uid, @RequestParam int rv_num){
+		boolean deleteReview = svc.deleteReview(rv_num);
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("deleteReview", deleteReview);
+		return map;
+	}
+	
+	@PostMapping("/detail/update")
+	@ResponseBody
+	public Map<String, Boolean> updateReview(@SessionAttribute(name="uid", required=false) String uid, ReviewVO review){
+		boolean updateReview = svc.updateReview(review);
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("updateReview", updateReview);
+		return map;
+	}
+	
+
+
 
 
 	

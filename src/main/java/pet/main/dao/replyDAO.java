@@ -25,11 +25,11 @@ public class replyDAO {
 	public List<ReplyVO> getReplyList(int i) {
 		return rMapper.getReplyList(i);
 	}
-	
+
 	public boolean insertReply(ReplyVO reply) {
 		return rMapper.insertReply(reply)>0;
 	}
-	
+
 	public boolean insertNestedRep(ReplyVO reply) {
 		return rMapper.insertNestedRep(reply)>0;
 	}
@@ -58,3 +58,4 @@ public class replyDAO {
 		return rMapper.updateViewCnt(i)>0;
 	}
 }
+

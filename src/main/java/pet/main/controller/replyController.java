@@ -23,39 +23,40 @@ import pet.main.vo.ReplyVO;
 
 
 @Controller
-@RequestMapping("/reply")
+@RequestMapping("/")
 @SessionAttributes("uid")
 public class replyController {
-	
+
 	@Autowired
 	private replyService rService;
-	
+
 	@GetMapping("/bDetail")
 	public String boardDetail(Model model, @SessionAttribute(name="uid", required=false) String uid) {
 		BoardVO board = rService.getBoardDetail(3); //게시판의 내용을 불러온다
-		
+
 		// 게시판 조회수증가
 		// bService.updateViewCnt(board);
-		
+
 		//로그인 체크
 		/*boolean authorCheck = false;
 		  if(uid==null) {
 			return "redirect:/login/loginForm";
 		} */
-		
-		
+
+
 		List<ReplyVO> replyList = rService.getReplyList(3); // 해당 게시판의 댓글리스트를 불러온다
 		model.addAttribute("uid", uid); // 현재 접속자의 uid 
 		model.addAttribute("board", board); // 게시판 글 정보
 		model.addAttribute("replyList", replyList); // 댓글리스트
 		return "board";
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/insertReply")
 	//댓글 삽입
 	public Map<String, Boolean> insertReply(ReplyVO reply) {
-		String screenOrder = rService.maxScreenOrder(reply.getBoardIdx());  //게시물의 가장 높은 댓글 순서 번호를 문자열로 가져온다
+		String screenOrder = rService.maxScreenOrder(reply.getBoardIdx());  //3번 게시물의 가장 높은 댓글 순서 번호를 문자열로 가져온다
+//		String screenOrder = rService.maxScreenOrder(reply.getBoardIdx());  //게시물의 가장 높은 댓글 순서 번호를 문자열로 가져온다8
 		int sOrder = 0;  // 새 댓글을 넣을때 screenOrder를 설정해 줄 변수
 		if(screenOrder != null) sOrder = Integer.parseInt(screenOrder) + 1; //null이 아니면 screenOrder의 최댓값 +1
 		reply.setScreenOrder(sOrder);
@@ -64,7 +65,7 @@ public class replyController {
 		map.put("inserted", inserted);
 		return map;
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/insertNestedRep")
 	//대댓글 삽입
@@ -77,7 +78,7 @@ public class replyController {
 		map.put("inserted", inserted);
 		return map;
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/deleteReply")
 	public Map<String, Boolean> deleteReply(@RequestParam int idx) {
@@ -87,7 +88,7 @@ public class replyController {
 		map.put("deleted", deleted2);
 		return map;
 	}
-	
+
 	@ResponseBody
 	@PostMapping("/updateReply")
 	public Map<String, Boolean> updateReply(ReplyVO reply) {
@@ -97,5 +98,5 @@ public class replyController {
 		map.put("updated", updated);
 		return map;
 	}
-	
+
 }

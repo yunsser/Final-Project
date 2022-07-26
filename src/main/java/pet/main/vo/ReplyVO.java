@@ -1,13 +1,8 @@
 package pet.main.vo;
 
-import org.springframework.stereotype.Component;
+import lombok.Data;
 
-import lombok.Getter;
-import lombok.Setter;
-
-@Getter
-@Setter
-@Component
+@Data
 public class ReplyVO {
 	private int idx;
 	private int boardIdx;

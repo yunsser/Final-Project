@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="pet.main.mapper.ReviewMapper">
+
+	<select id="getReviewList"
+		resultType="pet.main.vo.ReviewVO"
+		parameterType="String">
+		SELECT * FROM review
+		WHERE rv_mgtno=#{mgtno}
+		ORDER BY rv_date DESC
+	</select>
+	
+	<insert id="addReview"
+		parameterType="pet.main.vo.ReviewVO">
+		INSERT INTO review VALUES(null, #{rv_title}, #{rv_contents}, #{rv_id}, #{rv_mgtno}, NOW())
+	</insert>
+	
+	<select id="getReviewTotal"
+		resultType="int">
+		SELECT COUNT(*) FROM review	
+		WHERE rv_mgtno=#{mgtno}
+	</select>
+	
+	<delete id="deleteReview" parameterType="Integer">
+		DELETE FROM review WHERE rv_num=#{rv_num}
+	</delete>
+	
+	<update id="updateReview"
+		parameterType="pet.main.vo.ReviewVO">
+		UPDATE review
+		SET rv_title=#{rv_title}, rv_contents=#{rv_contents}, rv_date=NOW()
+		WHERE rv_num=#{rv_num}
+	</update>
+
+</mapper>
+  
+  
