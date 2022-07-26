@@ -42,15 +42,7 @@ function changeCate(){
 </script>
 <title>목록</title>
 
-<div class="container">
-   <div class="nav-scroller py-1 mb-2">
-      <nav class="nav d-flex justify-content-between">
-         <a class="p-2 link-secondary" href="#">병원게시판</a> <a
-            class="p-2 link-secondary" href="#">공유게시판</a> <a
-            class="p-2 link-secondary" href="#">유기동물게시판</a>
-      </nav>
-   </div>
-</div>
+
 <div class="container">
    <div class="nav-scroller py-1 mb-2">
       <nav class="nav d-flex justify-content-between" style="width:300px;">

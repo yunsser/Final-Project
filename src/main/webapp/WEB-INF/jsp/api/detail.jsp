@@ -3,7 +3,7 @@
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-<%@ include file = "/WEB-INF/jsp/layout/headerBasic.jsp" %>
+<%@ include file="/WEB-INF/jsp/layout/headerSearch.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -44,11 +44,29 @@
 
 
 <div class="container" >
-<dt><h3> ${seouldetail.BPLCNM} </h3></dt>
-<dt>전화번호: ${seouldetail.SITETEL}</dt>
-<dt>도로명 주소: ${seouldetail.RDNWHLADDR}</dt>
-<dt>지번 주소: ${seouldetail.SITEWHLADDR}</dt>
-</dl>
+<div class="card border-primary mb-3" style="max-width: 20rem;">
+        <div class="card-header">${seouldetail.BPLCNM}</div>
+     </div>
+   <c:if test="${seouldetail.SITETEL != '' }">
+      <dt><span class="badge bg-primary">전화</span> ${seouldetail.SITETEL}</dt>
+   </c:if>
+   <c:if test="${seouldetail.SITETEL == '' }">
+      <dt><span class="badge bg-primary">전화</span> <span class="text-muted">정보없음</span></dt>
+   </c:if>
+   <c:if test="${seouldetail.RDNWHLADDR != '' }">
+      <dt><span class="badge bg-primary">주소</span> ${seouldetail.RDNWHLADDR}</dt>
+   </c:if>
+   <c:if test="${seouldetail.RDNWHLADDR == '' }">
+      <dt><span class="badge bg-primary">주소</span> <span class="text-muted">정보없음</span></dt>
+   </c:if>
+   <c:if test="${seouldetail.SITEWHLADDR != '' }">
+      <dt><span class="badge bg-primary">지번 주소</span> ${seouldetail.SITEWHLADDR}</dt>
+   </c:if>
+   <c:if test="${seouldetail.SITEWHLADDR == '' }">
+      <dt><span class="badge bg-primary">지번 주소</span> <span class="text-muted">정보없음</span></dt>
+   </c:if>
+   </dl>
+
 
 
 <div id="map" style="width:100%;height:350px;"></div>
@@ -142,10 +160,27 @@ geocoder.addressSearch('${seouldetail.SITEWHLADDR}', function(result, status) {
  <c:when test="${csvdetail !=null }">
  <div class="container" >
     <dl>
-   <dt><h3> ${csvdetail.BPLCNM} </h3></dt>
-   <dt>전화번호: ${csvdetail.SITETEL}</dt>
-   <dt>도로명 주소: ${csvdetail.RDNWHLADDR}</dt>
-   <dt>지번 주소: ${csvdetail.SITEWHLADDR}</dt>
+    <div class="card border-primary mb-3" style="max-width: 20rem;">
+        <div class="card-header">${csvdetail.BPLCNM}</div>
+     </div>
+   <c:if test="${csvdetail.SITETEL != '' }">
+      <dt><span class="badge bg-primary">전화번호</span> ${csvdetail.SITETEL}</dt>
+   </c:if>
+   <c:if test="${csvdetail.SITETEL == '' }">
+      <dt><span class="badge bg-primary">전화번호</span> <span class="text-muted">정보없음</span></dt>
+   </c:if>
+   <c:if test="${csvdetail.RDNWHLADDR != '' }">
+      <dt><span class="badge bg-primary">주소</span> ${csvdetail.RDNWHLADDR}</dt>
+   </c:if>
+   <c:if test="${csvdetail.RDNWHLADDR == '' }">
+      <dt><span class="badge bg-primary">주소</span> <span class="text-muted">정보없음</span></dt>
+   </c:if>
+   <c:if test="${csvdetail.SITEWHLADDR != '' }">
+      <dt><span class="badge bg-primary">지번 주소</span> ${csvdetail.SITEWHLADDR}</dt>
+   </c:if>
+   <c:if test="${csvdetail.SITEWHLADDR == '' }">
+      <dt><span class="badge bg-primary">지번 주소</span> <span class="text-muted">정보없음</span></dt>
+   </c:if>
     </dl>
     
    <div id="map" style="width:100%;height:350px;"></div>
@@ -361,6 +396,8 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
        <div class="form-group">
           <h2>Review</h2>
               <input type="hidden" name="rv_mgtno" value="${mgtno}">
+              
+          <sec:authorize access="isAuthenticated()">
             <input type="hidden" name="rv_id" value="${user.user.uid}">
             <c:if test = "${user.user.uid != null}">
                 <label for="rv_title" class="form-label mt-4" style="width: 5%">제 목</label>
@@ -371,12 +408,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
                     <input type="button" class="btn btn-primary" onclick="addReview()" value="리뷰 작성" style="float: right;"/>
                </div>
             </c:if>
-            
-            <c:if test="${user.user.uid == null}">
+            </sec:authorize>
+
+          <sec:authorize access="isAnonymous()">
                   <a href="/loginForm">
                   <textarea rows="2" name="rv_contents" id="rv_contents" class="form-control" disabled style="text-align: center; justify-content: center;">
                   로그인이 필요한 서비스입니다</textarea></a>
-             </c:if>
+            </sec:authorize>
        </div>
 
    </form>
@@ -410,11 +448,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -441,11 +481,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -468,11 +510,14 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+           
+                     <sec:authorize access="isAuthenticated()">
               <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
               </c:if>
+            </sec:authorize>
               </span>
         </c:forEach>
       </div>
@@ -499,11 +544,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -526,11 +573,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -553,11 +602,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -584,11 +635,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -611,11 +664,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -638,11 +693,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -665,11 +722,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -696,11 +755,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -723,11 +784,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -750,11 +813,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -777,11 +842,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>
@@ -804,11 +871,13 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
            <div id="updateReviewBox${page.rv_num}"></div>
            <span class="rv_info">
            <code>${fn:substring(date,0,10)}</code>&nbsp&nbsp
+                     <sec:authorize access="isAuthenticated()">
            <c:if test="${user.user.uid == page.rv_id}">
               <a href = "javascript:updateForm(${page.rv_num},'${page.rv_title}', '${page.rv_contents}')">수정</a>
               <span>｜</span>
               <a href = "javascript:deleted('${page.rv_num}')">삭제</a>
            </c:if>
+            </sec:authorize>
            </span>
         </c:forEach>
       </div>

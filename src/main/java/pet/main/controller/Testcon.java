@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import pet.main.svc.HomeSVC;
-import pet.main.vo.TestVO;
+import pet.main.vo.HomeVO;
 
 @Controller
 @RequestMapping("/test")
@@ -18,7 +18,7 @@ public class Testcon {
 	
 	@GetMapping("/api")
 	public String list(Model model) {
-		List<TestVO> list = svc.list();
+		List<HomeVO> list = svc.list();
 		model.addAttribute("list", list);
 		return "index";
 	}

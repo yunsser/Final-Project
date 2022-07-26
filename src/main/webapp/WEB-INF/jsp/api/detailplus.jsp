@@ -284,15 +284,6 @@ var newText = text.replace(/(<([^>]+)>)/ig,"");
    <sec:authentication property="principal" var = "user" />
 </sec:authorize>
 
-<div class="container">
-	<div class="nav-scroller py-1 mb-2">
-		<nav class="nav d-flex justify-content-between">
-			<a class="p-2 link-secondary" href="#">병원게시판</a> <a
-				class="p-2 link-secondary" href="#">공유게시판</a> <a
-				class="p-2 link-secondary" href="#">유기동물게시판</a>
-		</nav>
-	</div>
-</div>
 
 <article>
 		<div class="container" role="main">
@@ -350,6 +341,22 @@ var newText = text.replace(/(<([^>]+)>)/ig,"");
 					</c:choose>
 				</div>
 			</div>
+			
+			
+			<!-- 수정 목록 버튼 -->
+				<sec:authorize access="isAuthenticated()">
+			<div class="btlistsav">
+			<c:if test ="${user.user.uid == detail.sh_name}">
+					<button type="button" class="btn btn-sm btn-primary"
+						onclick="location.href='/shfcedit?num=${detail.sh_num}'">수정</button>
+					<button type="button" class="btn btn-sm btn-primary"
+						onclick="location.href=del_board('${detail.sh_num}')">삭제</button>
+			</c:if>
+				<button type="button" class="btn btn-sm btn-primary"
+					onclick="location.href='/shfclist'">목록</button>
+			</div>
+</sec:authorize>
+			
 			
 <!-- 댓글 출력 -->
 <div class="container">
@@ -442,7 +449,7 @@ var newText = text.replace(/(<([^>]+)>)/ig,"");
 
             <sec:authorize access="isAnonymous()">
             <a href="/loginForm">
-                 <textarea rows="2" name="content" id="content" class="form-control" readonly>로그인이 필요</textarea>
+                 <textarea rows="2" name="content" id="content" class="form-control" readonly>로그인이 필요한 서비스입니다</textarea>
                  </a>
 </sec:authorize>
               </td>
@@ -451,19 +458,6 @@ var newText = text.replace(/(<([^>]+)>)/ig,"");
    </form>   
 
 
-			<!-- 수정 목록 버튼 -->
-				<sec:authorize access="isAuthenticated()">
-			<div class="btlistsav">
-			<c:if test ="${user.user.uid == detail.sh_name}">
-					<button type="button" class="btn btn-sm btn-primary"
-						onclick="location.href='/shfcedit?num=${detail.sh_num}'">수정</button>
-					<button type="button" class="btn btn-sm btn-primary"
-						onclick="location.href=del_board('${detail.sh_num}')">삭제</button>
-			</c:if>
-				<button type="button" class="btn btn-sm btn-primary"
-					onclick="location.href='/shfclist'">목록</button>
-			</div>
-</sec:authorize>
 
 
 		</div>

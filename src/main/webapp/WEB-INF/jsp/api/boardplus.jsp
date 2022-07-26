@@ -146,15 +146,6 @@ form {
 
 
 
-<div class="container">
-   <div class="nav-scroller py-1 mb-2">
-      <nav class="nav d-flex justify-content-between">
-         <a class="p-2 link-secondary" href="#">병원게시판</a> <a
-            class="p-2 link-secondary" href="#">공유게시판</a> <a
-            class="p-2 link-secondary" href="#">유기동물게시판</a>
-      </nav>
-   </div>
-</div>
 
 <form name="addform" id="form" role="form" method="post" onsubmit="return add();" enctype="multipart/form-data">
 
@@ -175,7 +166,8 @@ form {
       <label for="select" class="col-sm-2 col-form-label"
          style="font-size: 19px;">장소</label>
       <div class="col-sm-10">
-      <input type="text" class="form-control" id="place_name" name="sh_facNM" placeholder="장소 검색 버튼을 눌러 검색해주세요.">
+      
+      <input type="text" class="form-control" id="place_name" name="sh_facNM" placeholder="장소 검색 버튼을 눌러 검색해주세요." onclick="showPopup();" readonly>
       <input type="hidden" class="form-control" id="road_address_name" name="sh_facRoadAdd">
       <input type="hidden" class="form-control" id="address_name" name="sh_facAdd">
       <input type="hidden" class="form-control" id="phone" name="sh_facTel">

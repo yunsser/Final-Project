@@ -46,4 +46,10 @@
 	<update id="deleteReply2">
 		update reply set content = "삭제된 댓글" where idx = #{i};
 	</update>
+	
+	<update id="updateViewCnt"
+		parameterType="Integer">
+		update hospital set count = count+1 where num = #{i};
+	</update>
+	
 </mapper>

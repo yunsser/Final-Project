@@ -232,9 +232,16 @@ function getListItem(index, places) {
         road_address_name = places.road_address_name;
         address_name = places.address_name;
         phone = places.phone;
-       add = places.road_address_name.split(' ');
-       sido = add[0];
-       gugun = add[1];
+        
+        if(places.road_address_name != ''){
+            add = places.road_address_name.split(' ');
+            sido = add[0];
+            gugun = add[1];           
+          } else {
+             add = places.address_name.split(' ');
+             sido = add[0];
+             gugun = add[1];
+          }
         
         var message = '<div class="card border-primary mb-3" style="max-width: 50rem; margin:auto; margin-top:5px;"> <div class="card-header">' + places.place_name + '</div>';
         message += '<div class="card-body"> <div class="text-muted">' + '주소' +'</div>' 

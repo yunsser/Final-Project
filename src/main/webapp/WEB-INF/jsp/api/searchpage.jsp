@@ -3,7 +3,7 @@
     <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
     <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
     <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
-    <%@ include file = "/WEB-INF/jsp/layout/headerBasic.jsp" %>
+    <%@ include file="/WEB-INF/jsp/layout/headerSearch.jsp"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -35,15 +35,7 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 
 </head>
 <body>
-<div class="container">
-   <div class="nav-scroller py-1 mb-2">
-      <nav class="nav d-flex justify-content-between">
-         <a class="p-2 link-secondary" href="#">병원게시판</a> <a
-            class="p-2 link-secondary" href="#">공유게시판</a> <a
-            class="p-2 link-secondary" href="#">유기동물게시판</a>
-      </nav>
-   </div>
-</div>
+
 <div class="search">
    <label for="cateCodeA"></label><p></p><input type="hidden" id="cateCodeA" name="cateCodeA" class="data"><p></p>
       <form action ="/pagelist" method="get" onsubmit="return Searchsido();">

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import pet.main.dao.replyDAO;
 import pet.main.vo.BoardVO;
+import pet.main.vo.PostVO;
 import pet.main.vo.ReplyVO;
 
 @Service
@@ -51,5 +52,8 @@ public class replyService {
 
 	public boolean deleteReply2(int i) {
 		return dao.deleteReply2(i);
+	}
+	public boolean updateViewCnt(int i) {
+		return dao.updateViewCnt(i);
 	}
 }

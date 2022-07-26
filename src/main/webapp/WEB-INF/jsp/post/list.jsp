@@ -18,15 +18,6 @@
 
 <title>목록</title>
 
-<div class="container">
-	<div class="nav-scroller py-1 mb-2">
-		<nav class="nav d-flex justify-content-between">
-			<a class="p-2 link-secondary" href="#">병원게시판</a> <a
-				class="p-2 link-secondary" href="#">공유게시판</a> <a
-				class="p-2 link-secondary" href="#">유기동물게시판</a>
-		</nav>
-	</div>
-</div>
 
 <!-- 페이지네이션 -->
 	<div id="outter">
@@ -44,13 +35,13 @@
 	<!-- 페이지네이션 -->
 	
 	<!-- 게시판 -->
-	<table class="table" style="text-align: center; width: 80%; margin: auto;">
+	<table class="table" style="text-align: center; width: 67%; margin: auto;">
 		<tr>
 			<th>#</th>
 			<th>카테고리</th>
 			<th>제목</th>
 			<th>작성자</th>
-			<th>좋아요</th>
+			<th>조회수</th>
 		</tr>
 		<c:forEach var="u" items="${viewAll}">
 
@@ -68,12 +59,12 @@
 	<P>
 
 		<!-- 버튼 -->
-	<div class="btn-holder" style="display: flex; justify-content: center;">
+	<div class="btn-holder" style="display: flex; justify-content: flex-end; width: 84%">
 		<button class="btn btn-outline-primary" type="button"
 			onclick="location.href='/post/board'">
 			<span>글작성</span>
 		</button>
-	</div>
+	</div> 
 	<!-- 버튼 -->
 
 

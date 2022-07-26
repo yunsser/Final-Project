@@ -214,7 +214,8 @@ function updateSharefc() {
       <label for="select" class="col-sm-2 col-form-label"
          style="font-size: 19px;">장소</label>
       <div class="col-sm-10">
-      <input type="text" class="form-control" id="place_name" name="sh_facNM" placeholder="장소 검색 버튼을 눌러 검색해주세요." value="${detail.sh_facNM}">
+      <input type="text" class="form-control" id="place_name" name="sh_facNM" placeholder="장소 검색 버튼을 눌러 검색해주세요." value="${detail.sh_facNM}" onclick="showPopup();" readonly>
+
       <input type="hidden" class="form-control" id="road_address_name" name="sh_facRoadAdd" value="${detail.sh_facRoadAdd}">
       <input type="hidden" class="form-control" id="address_name" name="sh_facAdd" value="${detail.sh_facAdd}">
       <input type="hidden" class="form-control" id="phone" name="sh_facTel" value="${detail.sh_facTel}">

@@ -33,8 +33,10 @@ import pet.main.dao.PostDAO;
 import pet.main.svc.PostSVC;
 import pet.main.svc.TestSVC;
 import pet.main.vo.PageVO;
+import pet.main.svc.replyService;
 import pet.main.vo.PagingVO;
 import pet.main.vo.PostVO;
+import pet.main.vo.ReplyVO;
 
 @Controller
 @RequestMapping("/post")
@@ -52,7 +54,8 @@ public class PostController {
 	@Autowired
 	ResourceLoader resourceLoader;
 
-	
+	@Autowired
+	private replyService rService;
 //	공지사항 게시판 리스트 + 페이징
 	@GetMapping("/list")
 	public String noticeList(/*@SessionAttribute(name = "id", required = false)String id,*/  PagingVO vo, Model model,
@@ -107,8 +110,7 @@ public class PostController {
 	@PostMapping("/board")
 	@ResponseBody
 	public Map<String, Boolean> board(
-			@SessionAttribute(name = "id", required = false) @RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
-			HttpServletRequest request, PostVO post){        
+			@RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles, HttpServletRequest request, PostVO post){       
 		Map<String, Boolean> map = new HashMap<>();
 		boolean added = svc.board(mfiles, request, post);
 		// System.out.println(mfiles);
@@ -163,15 +165,20 @@ public class PostController {
 //	게시판 수정화면보기
 	
 	@GetMapping("/detail")
-	public String detailBoard(@SessionAttribute(name = "id", required = false) @RequestParam int num,
+	public String detailBoard(String uid, @RequestParam int num,
 			Model model) { // 일치시켜주면 // 들어감
 		PostVO post = svc.detailNum(num);
 		model.addAttribute("post", post);
+		rService.updateViewCnt(post.getNum()); // 게시판 조회수증가
+//		String s = "scott"; // 임의의 uid
+//		model.addAttribute("uid", s); // 현재 접속자의 uid 
+		List<ReplyVO> replyList = rService.getReplyList(post.getNum()); // 해당 게시판의 댓글리스트를 불러온다
+		model.addAttribute("replyList", replyList); // 댓글리스트
 		return "post/detail";
 	}
 
 	@GetMapping("/edit")
-	public String detailedit(@SessionAttribute(name = "id", required = false) @RequestParam int num,
+	public String detailedit(@RequestParam int num,
 			Model model) {
 		PostVO post = svc.detailNum(num);
 		model.addAttribute("post", post);
@@ -181,8 +188,7 @@ public class PostController {
 //	게시판 수정하기
 	@PostMapping("/update")
 	@ResponseBody
-	public Map<String, Boolean> updateBoard(
-			@SessionAttribute(name = "id", required = false) @RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
+	public Map<String, Boolean> updateBoard(@RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
 			HttpServletRequest request, PostVO post, List<String> delfiles, Model model) {
 		Map<String, Boolean> map = new HashMap<>();
 		boolean updated = svc.updated(request, post, mfiles, delfiles);

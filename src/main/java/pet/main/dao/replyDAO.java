@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
 import pet.main.vo.BoardVO;
+import pet.main.vo.PostVO;
 import pet.main.vo.ReplyVO;
 import pet.main.mapper.replyMapper;
 
@@ -52,4 +53,9 @@ public class replyDAO {
 	public boolean deleteReply2(int i) {
 		return rMapper.deleteReply2(i)>0;
 	}
+
+	public boolean updateViewCnt(int i) {
+		return rMapper.updateViewCnt(i)>0;
+	}
 }
+

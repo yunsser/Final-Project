@@ -99,6 +99,8 @@ public class ShareFcSVC {
             vo.setSh_title((String)map.get("sh_title"));
             vo.setSh_date((java.sql.Date)map.get("sh_date"));
             vo.setSh_facNM((String)map.get("sh_facNM"));
+            vo.setSh_facSido((String)map.get("sh_facSido"));
+            vo.setSh_facGugun((String)map.get("sh_facGugun"));
             vo.setSh_facAdd((String)map.get("sh_facAdd"));
             vo.setSh_facRoadAdd((String)map.get("sh_facRoadAdd"));
             vo.setSh_facTel((String)map.get("sh_facTel"));
