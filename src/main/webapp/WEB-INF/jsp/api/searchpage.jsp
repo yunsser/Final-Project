@@ -14,6 +14,8 @@
    .form-select { float:left; margin-right: 5px; }
    .pagination {display: flex; justify-content: center; margin-top: 15px; }
    .name { text-decoration:none; color:black;}
+   #load { text-align: center; margin-top:130px; display: grid; justify-content: center; }
+   .progress { width:400px;  }
    .container{
       margin-top : 15px; 
    }
@@ -38,7 +40,8 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 
 <div class="search">
    <label for="cateCodeA"></label><p></p><input type="hidden" id="cateCodeA" name="cateCodeA" class="data"><p></p>
-      <form action ="/pagelist" method="get" onsubmit="return Searchsido();">
+      <form action ="/petmong/hp/pagelist" method="get" onsubmit="return Searchsido();">
+      <input type="hidden" id="uid" name="uid" value="${user.user.uid }">
       <input type="hidden" id="pageNum" name="pageNum" value="${pageNum}">
          <div class="cate_wrap">
             <select class="form-select" name="code" id="code" style="width:133px;height:40px;">
@@ -62,6 +65,13 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
          <button class="btn btn-secondary" type="submit" >검색</button>
          </div>
       </form>
+</div>
+
+<div id ="load">
+<p class="lead">동물병원을 검색해보세요</p>
+ <div class="progress" style="display:none; justify-content: center;">
+  <div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
+</div>
 </div>
 
 <script>
@@ -150,7 +160,15 @@ for(let i = 0; i < codeList.length; i++){
       if($("#code").val() == 'none'){
          alert('시/도 를 선택해주세요.');
          return false;
-      }   
+      }  
+      
+      window.onbeforeunload = function (){ ////현재 페이지에서 다른 페이지로 넘어갈 때 표시해주는 기능
+    	  $('.progress').show();
+      }
+      
+      $(window).load(function () {          //페이지가 로드 되면 로딩 화면을 없애주는 것
+          $('.progress').hide();
+      });
       
       
    }

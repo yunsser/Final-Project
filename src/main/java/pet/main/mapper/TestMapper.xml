@@ -5,8 +5,47 @@
 <mapper namespace="pet.main.mapper.TestMapper">
 
 
-<select id="codeList" resultType="map" parameterType="Integer">
-	SELECT * FROM category
-</select>
+	<select id="codeList" resultType="map" parameterType="Integer">
+		SELECT *
+		FROM category
+	</select>
+
+	<!-- 동물병원 찜하기 -->
+	<insert id="dibsOn" parameterType="map" useGeneratedKeys="true"
+		keyProperty="dnum">
+		INSERT INTO hp_dibson
+		VALUES (null, #{uid} , #{hp_mgtno},
+		#{hp_name}, #{hp_tel}, #{hp_roadadd}, #{hp_add}, #{hp_sido},
+		#{hp_gugun})
+	</insert>
+
+	<!-- 찜 한 게시글 확인. (중복저장 하지않기위해.) -->
+	<delete id="dibsOnCancle" parameterType="map">
+		DELETE
+		FROM hp_dibson
+		WHERE uid = #{uid} AND hp_mgtno = #{hp_mgtno}
+	</delete>
+
+	<!-- 찜 한 게시글 수 가져오기. -->
+	<select id="dibsOnCnt" resultType="Integer"
+		parameterType="String">
+		SELECT COUNT(dnum)
+		FROM hp_dibson
+		WHERE uid = #{uid}
+	</select>
+
+	<!-- 찜 한 여부 색상 보기 위한 데이터 가져오기. -->
+	<select id="dibsOnPnum" resultType="String" parameterType="map">
+		SELECT hp_mgtno
+		FROM hp_dibson
+		WHERE uid = #{uid} AND hp_mgtno = #{hp_mgtno}
+	</select>
+
+	<!-- 찜한 리스트 가져오기 -->
+	<select id="dibsOnUid" resultType="map" parameterType="String">
+		SELECT *
+		FROM hp_dibson
+		WHERE uid = #{uid}
+	</select>
 
 </mapper>

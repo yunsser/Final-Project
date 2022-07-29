@@ -15,6 +15,8 @@
 <link href="/css/bootstrap.min.css" rel="stylesheet" type="text/css"> 
 <!-- 소셜로그인 아이콘 -->
 <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/xeicon@2.3.3/xeicon.min.css"> 
+<!-- 구글 아이콘 CDN -->
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <style>
 	#sbtn {
       	width: 95px; 
@@ -32,23 +34,28 @@
     		display : block;
 		}
     }
+	#info{
+		margin-top : 15px;
+	  }
 </style>
 </head> 
 <body>
-<%-- <sec:authentication property="principal" var = "userInfo" /> --%>
+<sec:authorize access="isAuthenticated()">
+	<sec:authentication property="principal" var = "user" />
+</sec:authorize>
 <div class="container"> 
 <!-- 네비바 시작 -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">pet`mong</a>    
+    <a class="navbar-brand" href="/petmong">pet`mong</a>    
       <form class="d-flex">
       	<sec:authorize access="isAuthenticated()"> <!-- 권한에 관계없이 로그인 인증을 받은 경우 -->
-	      	<button id = "sbtn" type="button" class="btn btn-outline-info" onclick ="location.href='/user/mypage?uid=${user.uid}'">Mypage</button>
-	      	<button id = "sbtn" type="button" class="btn btn-outline-secondary" onclick ="location.href='/logout'">Log Out</button>
+	      	<button id = "sbtn" type="button" class="btn btn-outline-info" onclick ="location.href='/petmong/user/mypage?uid=${user.user.uid}'">Mypage</button>
+	      	<button id = "sbtn" type="button" class="btn btn-outline-secondary" onclick ="location.href='/petmong/logout'">Log Out</button>
       	</sec:authorize>
 		<sec:authorize access="isAnonymous()">
-	      	<button id = "sbtn" type="button" class="btn btn-outline-secondary" onclick ="location.href='/loginForm'">Log In</button>
-	      	<button id = "sbtn" type="button" class="btn btn-outline-success" onclick ="location.href='/signupForm'">Sign Up</button>
+	      	<button id = "sbtn" type="button" class="btn btn-outline-secondary" onclick ="location.href='/petmong/loginForm'">Log In</button>
+	      	<button id = "sbtn" type="button" class="btn btn-outline-success" onclick ="location.href='/petmong/signupForm'">Sign Up</button>
 		</sec:authorize>
       </form>
     </div>
@@ -59,36 +66,33 @@
 <!-- 사이드바 시작 -->
  <div class="flex-shrink-0 p-3 bg-white" style="width: 280px;">
     <a href="/" class="d-flex align-items-center pb-3 mb-3 link-dark text-decoration-none border-bottom">
-      <span class="fs-5 fw-semibold">${user.name}님 반갑습니다.</span>
+      <span class="fs-5 fw-semibold">${user.user.name}님 반갑습니다.</span>
     </a>
     <ul class="list-unstyled ps-0">
       <li class="mb-1">
         <button class="btn btn-toggle align-items-center rounded collapsed" 
-        data-bs-toggle="collapse" data-bs-target="#home-collapse" aria-expanded="true"
-        onclick="location.href='/user/userInfo?uid=${user.uid}'">
+        data-bs-toggle="collapse" data-bs-target="#home-collapse"
+        onclick="location.href='/petmong/user/userInfo?uid=${user.user.uid}'">
           개인정보수정
         </button>
       </li>
       
       <li class="mb-1">
-        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false">
+        <button class="btn btn-toggle align-items-center rounded collapsed" 
+        data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" 
+        onclick = "location.href='/petmong/user/myBoard?uid=${user.user.uid}'">
           작성한 게시글
         </button>
       </li>
       
       <li class="mb-1">
-        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" data-bs-target="#orders-collapse" aria-expanded="false">
+        <button class="btn btn-toggle align-items-center rounded collapsed" data-bs-toggle="collapse" 
+        data-bs-target="#orders-collapse" aria-expanded="false" onclick = "location.href='/petmong/user/dibsOnBoard?uid=${user.user.uid}'">
           찜한 게시글
         </button>
         
       </li>
-      <li class="border-top my-3"></li>
-      <li class="mb-1">
-        <button class="btn btn-toggle align-items-center rounded collapsed" >
-          3
-        </button>
-
-      </li>
+      
     </ul>
   </div>
 <!-- 사이드바 끝 -->

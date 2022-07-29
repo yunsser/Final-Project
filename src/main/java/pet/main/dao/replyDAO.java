@@ -46,16 +46,35 @@ public class replyDAO {
 		return rMapper.deleteReply(i)>0;
 	}
 
-	public boolean updateReply(ReplyVO reply) {
-		return rMapper.updateReply(reply)>0;
-	}
-
 	public boolean deleteReply2(int i) {
 		return rMapper.deleteReply2(i)>0;
 	}
 
+	public boolean updateReply(ReplyVO reply) {
+		return rMapper.updateReply(reply)>0;
+	}
+
+
 	public boolean updateViewCnt(int i) {
 		return rMapper.updateViewCnt(i)>0;
 	}
+	
+	public boolean plusChildCnt(int parent) {
+		return rMapper.plusChildCnt(parent)>0;
+	}
+
+	public int getParentScreenOrder(int parent) {
+		return rMapper.getParentScreenOrder(parent);
+	}
+
+	public int getReplyCnt(int num) {
+		return rMapper.getReplyCnt(num);
+	}
+
+	public boolean minusChildCnt(int idx) {
+		return rMapper.minusChildCnt(idx)>0;
+	}
+
+	
 }
 

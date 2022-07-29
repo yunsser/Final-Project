@@ -51,25 +51,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 				.anyRequest().permitAll()
 				.and()
 				.formLogin()
-				.loginPage("/loginForm")
+				.loginPage("/petmong/loginForm")
 				.usernameParameter("uid")
 				.passwordParameter("upw")
-				.loginProcessingUrl("/login") //login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인진행해준다.
+				.loginProcessingUrl("/petmong/login") //login 주소가 호출이 되면 시큐리티가 낚아채서 대신 로그인진행해준다.
 //				.defaultSuccessUrl("/") // login이 성공되면 돌가는 페이지. 핸들러가 있다면 사용X.
 				.successHandler(successHandler) // login 성공시 후처리.
 				.failureHandler(failureHandler) // login 실패시 후처리.
 				// oauth2 (구글,페이스북,네이버,카카오)로그인 설정.
 				.and()
 				.oauth2Login()
-				.loginPage("/loginForm")
-				.defaultSuccessUrl("/") // 로그인 성공 후 추가 정보 입력하기 위해 이동.
-				.failureUrl("/loginForm") // 로그인 실패 시 /loginForm으로 이동.
+				.loginPage("/petmong/loginForm")
+				.defaultSuccessUrl("/petmong") // 로그인 성공 후 인덱스 페이지 이동.
+				.failureUrl("/petmong/loginForm") // 로그인 실패 시 /loginForm으로 이동.
 				.userInfoEndpoint() // 로그인 성공 후 사용자정보를 가져온다.
 				.userService(principalOauth2UserService); // 사용자정보 처리시 사용.
 		
 				http.logout()
-				.logoutUrl("/logout") // default
-				.logoutSuccessUrl("/")
+				.logoutUrl("/petmong/logout") // default
+				.logoutSuccessUrl("/petmong")
 				.permitAll();
 	}	
 

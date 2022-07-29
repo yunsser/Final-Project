@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="pet.main.mapper.ShareFcReplyMapper">
+
+
+	<select id="getBoardDetail" resultType="pet.main.vo.ShareFcVO">
+		select * from
+		share_facility where sh_num = #{sh_num};
+	</select>
+
+	<select id="getReplyList" 
+       resultType="pet.main.vo.ShareFcReplyVO">
+       select * from sf_reply where boardIdx = #{boardIdx} order by screenOrder, idx
+     </select>
+
+	<insert id="insertReply"
+		parameterType="pet.main.vo.ShareFcReplyVO">
+		insert into sf_reply values
+		(NULL,#{boardIdx},#{nickname},
+		NOW(),#{content},default,#{screenOrder}, default, default, #{name});
+	</insert>
+
+	<insert id="insertNestedRep">
+		insert into sf_reply values
+		(NULL,#{boardIdx},#{nickname},NOW(),#{content},#{depth},#{screenOrder},#{parent},
+		default, #{name});
+	</insert>
+
+	<select id="maxScreenOrder" resultType="String">
+		select max(screenOrder) from sf_reply where boardIdx=#{i};
+	</select>
+
+	<update id="screenOrderUpdate">
+		update sf_reply set screenOrder = screenOrder+1
+		where boardIdx = #{boardIdx} and screenOrder>#{screenOrder};
+	</update>
+
+	<update id="updateReply">
+		update sf_reply set content = #{content}, date=NOW()
+		where idx = #{idx};
+	</update>
+
+	<delete id="deleteReply">
+		delete from sf_reply where idx = #{i};
+	</delete>
+
+	<update id="deleteReply2">
+		update sf_reply set content = "삭제된 댓글" where idx =
+		#{i};
+	</update>
+
+	<update id="updateViewCnt" parameterType="Integer">
+		update hospital set
+		count = count+1 where num = #{i};
+	</update>
+
+	<update id="plusChildCnt">
+		update sf_reply set childCnt = childCnt+1
+		where idx = #{parent};
+	</update>
+
+	<select id="getParentScreenOrder" resultType="Integer">
+		select screenOrder+childCnt from sf_reply where idx=#{parent};
+	</select>
+
+	<select id="getReplyCnt" resultType="Integer">
+		select count(*) from sf_reply where boardIdx=#{num};
+	</select>
+	
+	<update id="minusChildCnt" parameterType="Integer">
+  	 	update sf_reply r1 set r1.childCnt = if(r1.childCnt>0, r1.childCnt-1, r1.childCnt) 
+		where r1.idx = (select parent from (select parent from sf_reply where idx=#{idx})tmp);
+   </update>
+</mapper>

@@ -2,9 +2,6 @@
     pageEncoding="UTF-8"%>
 <%@ include file = "../layout/headerMypage.jsp" %>
 <style>
-	#info{
-		margin-top : 15px;
-	}
 	.box {
 		width: 150px;
    	 	height: 150px; 
@@ -36,26 +33,23 @@
 							<img id = "img" class="img" onerror="this.src='/image/seokgu.jpg'" src="/resources/userProfile/${imgName}" />
 						</div>
 						<div style = "font-size: 25px; text-align: center;">
-							${user.uid}
-							${imgName}
-							resources/userProfile/${imgName}
+							${user.user.name}                 
 						</div>
 					</div>
 					<div class="col-md-4 Cnt">
 						<div>
-							13
+							${myBoardCnt}
 						</div>
 						게시글 수
 					</div>
 					<div class="col-md-4 Cnt">
 						<div >
-							5
+							${dibsOnCnt}
 						</div>
 						찜한 게시글
 					</div>
 				</div>
 			</div>
-principal : <sec:authentication property="principal"/>
 		</div>
 		<!-- 푸터 시작 -->
 	<%@ include file = "../layout/footer.jsp" %>

@@ -39,7 +39,7 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 
 <div class="search">
    <label for="cateCodeA"></label><p></p><input type="hidden" id="cateCodeA" name="cateCodeA" class="data"><p></p>
-      <form action ="/pagelist" method="get" onsubmit="return Searchsido();">
+      <form action ="/petmong/hp/pagelist" method="get" onsubmit="return Searchsido();">
       <input type="hidden" id="pageNum" name="pageNum" value="${pageNum}">
          <div class="cate_wrap">
             <select class="form-select" name="code" id="code" style="width:133px;height:40px;">
@@ -165,19 +165,44 @@ for(let i = 0; i < codeList.length; i++){
       <th scope="col">No</th>
       <th scope="col">병원명</th>
       <th scope="col">주소</th>
+	 <th>
+			<i class="material-icons" style = " font-size: 1.5em;">
+				favorite
+			</i>
+		</th>
     </tr>
   </thead>
 
 <c:set var="texts" value="${gugunCD}"/>
-<c:forEach begin="${page.start-1}" end="${page.end-1}" var="l" items="${list}" >
+<c:forEach begin="${page.start-1}" end="${page.end-1}" var="l" items="${list}" varStatus="status">
 <c:set var="i" value="${i+1 }"/>
 
 
   <tbody>
     <tr class="table-light">
       <th scope="row">${i}</th>
-      <td><a class="name" href="/detail?mgtno=${l.MGTNO}">${l.BPLCNM}</a></td>
-      <td>${l.SITEWHLADDR}</td>
+      <td><a class="name" href="/petmong/hp/detail?uid=${user.user.uid}&mgtno=${l.MGTNO}">${l.BPLCNM}</a></td>
+      <c:if test="${l.RDNWHLADDR == '' }">
+      <td><a class="name" href="/petmong/hp/detail?uid=${user.user.uid}&mgtno=${l.MGTNO}">${l.SITEWHLADDR}</a></td>      
+      </c:if>
+      <c:if test="${l.RDNWHLADDR != '' }">
+      <td><a class="name" href="/petmong/hp/detail?uid=${user.user.uid}&mgtno=${l.MGTNO}">${l.RDNWHLADDR }</a></td>
+      </c:if>
+      <td>
+		<c:choose>
+        	<c:when test="${spnumList[status.index] eq l.MGTNO}">	
+				<i id = "dibs" class="material-icons" style = "color : red; font-size: 1.5em;">
+					favorite
+				</i>
+        	</c:when>
+        	<c:otherwise>	
+				<i id = "dibs" class="material-icons" style = "color : pink; font-size: 1.5em;">
+					favorite
+				</i>
+        	</c:otherwise>
+       	</c:choose>
+     		</td>
+      
     </tr>
 
 </c:forEach>
@@ -188,12 +213,11 @@ for(let i = 0; i < codeList.length; i++){
   
   </table>
 
-
 <div>
   <ul class="pagination">
      <li class="page-item">
         <c:if test="${page.prev}">
-      <a class="page-link" href="/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${page.startPage-1}">&laquo;</a>
+      <a class="page-link" href="/petmong/hp/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${page.startPage-1}">&laquo;</a>
         </c:if>
     </li>
   
@@ -201,12 +225,12 @@ for(let i = 0; i < codeList.length; i++){
 <c:choose>
     <c:when test="${page.nowPage==num}">
     <li class="page-item active">
-      <a class="page-link" href="/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${num}">${num}</a>
+      <a class="page-link" href="/petmong/hp/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${num}">${num}</a>
     </li>
     </c:when>
     <c:otherwise>
     <li class="page-item">
-      <a class="page-link" href="/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${num}">${num}</a>
+      <a class="page-link" href="/petmong/hp/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${num}">${num}</a>
     </li>
     </c:otherwise>
     
@@ -214,7 +238,7 @@ for(let i = 0; i < codeList.length; i++){
  </c:forEach>
      <li class="page-item">
         <c:if test="${page.next}">
-      <a class="page-link" href="/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${page.endPage+1}">&raquo;</a>
+      <a class="page-link" href="/petmong/hp/pagelist?code=${code}&gugunCD=${gugunCD}&pageNum=${page.endPage+1}">&raquo;</a>
         </c:if>
     </li>
   </ul>

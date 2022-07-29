@@ -24,7 +24,7 @@
 <!-- include summernote-ko-KR -->
 <script src="/resources/js/summernote-ko-KR.js"></script>
 <style>
-form {
+#inform {
    width: 70%;
    margin: auto;
 }
@@ -78,7 +78,7 @@ function del_board(num) {
    /* alert(obj.uid); */
 
    $.ajax({
-      url: '/shfcedit/filedelete',
+      url: '/petmong/shfc/shfcedit/filedelete',
       method: 'post',
       cache: false,
       data: obj,
@@ -112,11 +112,11 @@ function updateSharefc() {
       return false;
    }
    //var formData = new FormData();
-   var formData = new FormData($("#form")[0]);
+   var formData = new FormData($("#inform")[0]);
    formData.append("delfiles", delfiles);
    
    $.ajax({
-      url: '/shfcedit/edit',
+      url: '/petmong/shfc/shfcedit/edit',
       method: 'post',
       enctype: 'multipart/form-data',
       cache: false,
@@ -130,7 +130,7 @@ function updateSharefc() {
          } else {
             alert('저장 실패');
          }
-         location.href = "/shfclist";
+         location.href = "/petmong/shfc/shfclist";
       },
       error: function(xhr, status, err) {
           alert("code:"+xhr.status+"\n"+"message:"+xhr.responseText+"\n"+"error:"+err);
@@ -172,7 +172,7 @@ function updateSharefc() {
       // window.name = "부모창 이름";            
        window.name = "parentForm";            
       // window.open("open할 window", "자식창 이름", "팝업창 옵션");            
-      openWin = window.open("/fcsearch",                    
+      openWin = window.open("/petmong/shfc/fcsearch",                    
             "childForm", "width=570, height=350, resizable = no, scrollbars = no");
       //openWin.document.getElementById("cInput").value = document.getElementById("pInput").value;
            
@@ -185,17 +185,7 @@ function updateSharefc() {
 
 
 
-<div class="container">
-   <div class="nav-scroller py-1 mb-2">
-      <nav class="nav d-flex justify-content-between">
-         <a class="p-2 link-secondary" href="#">병원게시판</a> <a
-            class="p-2 link-secondary" href="#">공유게시판</a> <a
-            class="p-2 link-secondary" href="#">유기동물게시판</a>
-      </nav>
-   </div>
-</div>
-
-<form name="updateForm" id="form" role="form" method="post" onsubmit="return updateSharefc();" enctype="multipart/form-data">
+<form name="inform" id="inform" role="form" method="post" onsubmit="return updateSharefc();" enctype="multipart/form-data">
 <input type="hidden" name="sh_num" id="sh_num" value="${detail.sh_num}">
    <div class="form-group row">
       <label for="select" class="col-sm-2 col-form-label"
@@ -214,7 +204,9 @@ function updateSharefc() {
       <label for="select" class="col-sm-2 col-form-label"
          style="font-size: 19px;">장소</label>
       <div class="col-sm-10">
-      <input type="text" class="form-control" id="place_name" name="sh_facNM" placeholder="장소 검색 버튼을 눌러 검색해주세요." value="${detail.sh_facNM}" onclick="showPopup();" readonly>
+      <input type="text" class="form-control" id="place_name" name="sh_facNM" placeholder="장소 검색 버튼을 눌러 검색해주세요." 
+      value="${detail.sh_facNM}" onclick="showPopup();" style="width: 86%;
+    float: left;" readonly>
 
       <input type="hidden" class="form-control" id="road_address_name" name="sh_facRoadAdd" value="${detail.sh_facRoadAdd}">
       <input type="hidden" class="form-control" id="address_name" name="sh_facAdd" value="${detail.sh_facAdd}">
@@ -222,13 +214,11 @@ function updateSharefc() {
       <input type="hidden"  class="form-control" id="sido" name="sh_facSido" value="${detail.sh_facSido}">
       <input type="hidden"  class="form-control" id="gugun" name="sh_facGugun" value="${detail.sh_facGugun}">
 
-      <%--
-       <button type ="button" id = "kakaomap">장소 검색</button>
-       --%>
       <input id="newwin" name="newwin" type="button" class="btn btn-outline-primary" value="장소 검색" onclick="showPopup();">
       </div>
    </div>
 
+    <div style="clear: both;"></div>
 
    <div class="form-group row">
       <label for="title" class="col-sm-2 col-form-label"
@@ -242,9 +232,8 @@ function updateSharefc() {
       <label for="author" class="col-sm-2 col-form-label"
          style="font-size: 19px;">작성자</label>
       <div class="col-sm-10">
-         <input type="text" class="form-control" id="sh_name" name="sh_name"
-            placeholder="${uid}" value="${detail.sh_name}">
-         <!-- readonly -->
+         <input type="text" class="form-control" id="sh_nickname" name="sh_nickname" value="${detail.sh_nickname}" readonly>
+          <input type="hidden" class="form-control" id="sh_name" name="sh_name" value="${detail.sh_name}" readonly>
       </div>
    </div>
      
@@ -264,7 +253,7 @@ function updateSharefc() {
                            maxFractionDigits="0" />
                         <div id="${f.att_num}">
                            <span class="form-control"> <a
-                              href="/post/file/download/${f.att_num}">${f.filename}</a>
+                              href="/petmong/shfc/shfcdetail/file/download/${f.att_num}">${f.filename}</a>
                               [${kilo}kb] <img src="/upload/${f.filename}" width="100px"
                               height="100px" alt="" class="thumb" /> <a class="link_del"
                               href="javascript:del_file(${f.att_num});">삭제</a></span>
@@ -289,7 +278,7 @@ function updateSharefc() {
          <div class="btlistsav">
             <button type="submit" class="btn btn-sm btn-primary">완료</button>
             <button type="button" class="btn btn-sm btn-primary"
-               onclick="location.href='/shfclist'">목록</button>
+               onclick="location.href='/petmong/shfc/shfclist'">목록</button>
          </div>
 
       
