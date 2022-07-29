@@ -4,73 +4,226 @@
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="pet.main.mapper.ShareFcMapper">
 
-   <!-- 게시글 목록 -->
-   <select id="ShareFcList"
-      resultType="pet.main.vo.ShareFcVO"
-      parameterType="String">
-      SELECT * FROM
-      (SELECT * FROM share_facility WHERE sh_facCate LIKE CONCAT('%', #{cate} ,'%')) f
-      WHERE f.sh_facSido LIKE CONCAT('%', #{sido} ,'%') and f.sh_facGugun LIKE CONCAT ('%', #{gugun} ,'%')
-      ORDER BY f.sh_num DESC
-   </select>
-   
-   <!-- 게시글 디테일 -->
-   <select id="detailSharefc"
-      resultType="map"
-      parameterType="Integer">
-      SELECT * FROM share_facility f
-      LEFT OUTER JOIN sf_attach a
-      ON
-      f.sh_num = a.shfc_num
-      WHERE f.sh_num=#{sh_num}
-   </select>
+	<!-- 게시글 목록 -->
+	<select id="ShareFcList" resultType="pet.main.vo.ShareFcVO"
+		parameterType="String">
+		SELECT * FROM
+		(SELECT * FROM
+		(SELECT * FROM (SELECT * FROM share_facility WHERE sh_facCate LIKE
+		CONCAT('%',#{cate},'%')) f
+		WHERE f.sh_facSido LIKE CONCAT('%',#{sido},'%')) s
+		WHERE s.sh_facGugun LIKE CONCAT('%', #{gugun},'%')) d 
+		LEFT OUTER JOIN ( SELECT spnum,  SUM(shfc_likedislike.like) as sumlike , SUM(dislike) as sumdislike FROM final.shfc_likedislike GROUP BY spnum) l 
+		ON d.sh_num = l.spnum
+		ORDER BY d.sh_num DESC
+	</select>
 
-   <!-- 리스트 추가 -->
-   <insert id="addShareFc"
-      parameterType="pet.main.vo.ShareFcVO"
-      useGeneratedKeys="true" keyProperty="sh_num">
-      INSERT INTO share_facility
-      VALUES(null, #{sh_name}, #{sh_title}, #{sh_content}, NOW(), #{sh_facSido}, #{sh_facGugun}, #{sh_facNM}, #{sh_facRoadAdd}, #{sh_facAdd}, #{sh_facTel}, #{sh_facCate}, #{sh_count})
-   </insert>
-   
-   <!-- 첨부파일 업로드 -->
-   <insert id="addfile"
-      parameterType="pet.main.vo.Sf_attachVO">
-      INSERT INTO sf_attach
-      VALUES(null, #{shfc_num}, #{filename}, #{filesize})
-   </insert>
-   
-   <!-- 첨부파일 불러오기 -->
-   <select id="getFilename" parameterType="Integer"
-      resultType="String">
-      SELECT filename FROM sf_attach
-      WHERE att_num=#{att_num}
-   </select>
-   
-   <!-- 게시글 수정 -->
-   <update id="updateShareFc"
-      parameterType="pet.main.vo.ShareFcVO">
-      UPDATE share_facility 
-      SET sh_title=#{sh_title}, sh_content=#{sh_content}, sh_date=NOW(), sh_facSido=#{sh_facSido}, sh_facGugun=#{sh_facGugun}, sh_facNM=#{sh_facNM}, sh_facRoadAdd=#{sh_facRoadAdd}, sh_facAdd=#{sh_facAdd},sh_facTel=#{sh_facTel}, sh_facCate=#{sh_facCate}
-      WHERE sh_num=#{sh_num}  
-   </update>
+	<!-- 게시글 디테일 -->
+	<select id="detailSharefc" resultType="map"
+		parameterType="Integer">
+		SELECT * FROM share_facility f
+		LEFT OUTER JOIN sf_attach a
+		ON f.sh_num = a.shfc_num
+		LEFT OUTER JOIN ( SELECT spnum,  SUM(shfc_likedislike.like) as sumlike , SUM(dislike) as sumdislike FROM final.shfc_likedislike GROUP BY spnum) l 
+		ON f.sh_num = l.spnum
+		WHERE f.sh_num= #{sh_num}
+	</select>
 
-   <!-- 첨부파일 삭제 -->
-   <delete id="deletefile"
-      parameterType="Integer">
-      DELETE FROM sf_attach
-      WHERE att_num=#{att_num}
-   </delete>
-   
-   <!-- 게시글 삭제 -->
-   <delete id="deleteShareFc"
-      parameterType="Integer">
-      DELETE FROM share_facility
-      WHERE sh_num=#{sh_num}
-   </delete>
-   
-   <select id="codeList" resultType="map" parameterType="String">
-      SELECT * FROM sf_category
-   </select>
+	<!-- 리스트 추가 -->
+	<insert id="addShareFc" parameterType="pet.main.vo.ShareFcVO"
+		useGeneratedKeys="true" keyProperty="sh_num">
+		INSERT INTO share_facility
+		VALUES(null, #{sh_name}, #{sh_title}, #{sh_content}, NOW(), #{sh_facSido},
+		#{sh_facGugun}, #{sh_facNM}, #{sh_facRoadAdd}, #{sh_facAdd},
+		#{sh_facTel}, #{sh_facCate}, #{sh_viewCnt}, #{sh_nickname})
+	</insert>
+
+	<!-- 첨부파일 업로드 -->
+	<insert id="addfile" parameterType="pet.main.vo.Sf_attachVO">
+		INSERT INTO sf_attach
+		VALUES(null, #{shfc_num}, #{filename}, #{filesize})
+	</insert>
+
+	<!-- 첨부파일 불러오기 -->
+	<select id="getFilename" parameterType="Integer"
+		resultType="String">
+		SELECT filename FROM sf_attach
+		WHERE att_num=#{att_num}
+	</select>
+
+	<!-- 게시글 수정 -->
+	<update id="updateShareFc" parameterType="pet.main.vo.ShareFcVO">
+		UPDATE share_facility
+		SET sh_title=#{sh_title}, sh_content=#{sh_content}, sh_date=NOW(),
+		sh_facSido=#{sh_facSido}, sh_facGugun=#{sh_facGugun},
+		sh_facNM=#{sh_facNM}, sh_facRoadAdd=#{sh_facRoadAdd},
+		sh_facAdd=#{sh_facAdd},sh_facTel=#{sh_facTel},
+		sh_facCate=#{sh_facCate}
+		WHERE sh_num=#{sh_num}
+	</update>
+
+	<!-- 첨부파일 삭제 -->
+	<delete id="deletefile" parameterType="Integer">
+		DELETE FROM sf_attach
+		WHERE att_num=#{att_num}
+	</delete>
+
+	<!-- 게시글 삭제 -->
+	<delete id="deleteShareFc" parameterType="Integer">
+		DELETE FROM share_facility
+		WHERE sh_num=#{sh_num}
+	</delete>
+
+	<select id="codeList" resultType="map" parameterType="String">
+		SELECT * FROM sf_category
+	</select>
+	
+	<!-- 메인에서 검색 기능 -->
+	<select id="sfsearch" resultType="pet.main.vo.ShareFcVO"
+		parameterType="String">
+		SELECT * FROM share_facility
+		WHERE sh_title LIKE CONCAT('%', #{keyword} ,'%') or sh_content LIKE CONCAT('%', #{keyword} ,'%') or sh_facNM LIKE CONCAT('%', #{keyword} ,'%') or sh_facRoadAdd LIKE CONCAT('%', #{keyword} ,'%') or sh_facAdd LIKE CONCAT('%', #{keyword} ,'%')
+		ORDER BY sh_date DESC
+	</select>
+	
+	<!-- 메인검색 기능 count -->
+	<select id="sfsearchcount" resultType="Integer">
+		SELECT count(*) FROM share_facility
+		WHERE sh_title LIKE CONCAT('%', #{keyword} ,'%') or sh_content LIKE CONCAT('%', #{keyword} ,'%') or sh_facNM LIKE CONCAT('%', #{keyword} ,'%') or sh_facRoadAdd LIKE CONCAT('%', #{keyword} ,'%') or sh_facAdd LIKE CONCAT('%', #{keyword} ,'%')
+		ORDER BY sh_date DESC
+	</select>
+	
+		<!-- 조회수 증가 -->
+	<update id="viewCnt"
+		parameterType="Integer">
+		UPDATE share_facility 
+		SET sh_viewCnt = sh_viewCnt + 1 
+		WHERE sh_num = #{num}
+	</update>
+	
+	<!-- 게시글 추천하기. -->
+	<insert id = "like"
+		parameterType="map"
+		useGeneratedKeys="true" keyProperty="lnum">
+		INSERT INTO shfc_likedislike(lnum, uid, spnum, shfc_likedislike.like, category)
+		VALUES (null, #{uid} , #{spnum}, 1, #{category})	
+	</insert>
+	
+	<!-- 게시글 추천 최초 확인. -->
+	<select id="likeCheck"
+		parameterType="map"
+		resultType= "int">
+		SELECT count(shfc_likedislike.like)
+		FROM shfc_likedislike 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</select>
+	
+	<!-- 추천 수 확인 -->
+	<select id="likeCntCheck"
+		resultType = "int"
+		parameterType="map">
+		SELECT shfc_likedislike.like 
+		FROM shfc_likedislike 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</select>
+	
+	<!-- 게시글 추천 취소하기. -->
+	<update id = "likeCancle"
+		parameterType="map">
+		UPDATE shfc_likedislike
+		SET shfc_likedislike.like = shfc_likedislike.like - 1 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</update>
+	
+	<!-- 추천 취소 후 다시 추천할 시 업데이트. -->
+	<update id = "relike"
+		parameterType="map">
+		UPDATE shfc_likedislike
+		SET shfc_likedislike.like = shfc_likedislike.like + 1 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</update>
+	
+	<!-- 게시글 비추천하기. -->
+	<insert id = "dislike"
+		parameterType="map"
+		useGeneratedKeys="true" keyProperty="lnum">
+		INSERT INTO shfc_likedislike(lnum, uid, spnum, shfc_likedislike.dislike, category)
+		VALUES (null, #{uid} , #{spnum}, 1, #{category})	
+	</insert>
+	
+	<!-- 게시글 비추천 최초 확인. -->
+	<select id="dislikeCheck"
+		parameterType="map"
+		resultType= "int">
+		SELECT count(shfc_likedislike.dislike)
+		FROM shfc_likedislike 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</select>
+	
+	<!-- 비추천 수 확인 -->
+	<select id="dislikeCntCheck"
+		resultType = "int"
+		parameterType="map">
+		SELECT shfc_likedislike.dislike 
+		FROM shfc_likedislike 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</select>
+	
+	<!-- 게시글 비추천 취소하기. -->
+	<update id = "dislikeCancle"
+		parameterType="map">
+		UPDATE shfc_likedislike
+		SET shfc_likedislike.dislike = shfc_likedislike.dislike - 1 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</update>
+	
+	<!-- 비추천 취소 후 다시 비추천할 시 업데이트. -->
+	<update id = "redislike"
+		parameterType="map">
+		UPDATE shfc_likedislike
+		SET shfc_likedislike.dislike = shfc_likedislike.dislike + 1 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</update>
+	
+	<!-- 게시글 찜하기. -->
+	<insert id="dibsOn"
+		parameterType="map"
+		useGeneratedKeys="true" keyProperty="dnum">
+		INSERT INTO shfc_dibson
+		VALUES (null, #{uid} , #{spnum}, #{category})
+	</insert>
+	
+	<!-- 찜 한 게시글 확인. (중복저장 하지않기위해.) -->
+	<delete id="dibsOnCancle"
+		parameterType="map">
+		DELETE 
+		FROM shfc_dibson 
+		WHERE uid = #{uid} AND spnum = #{spnum} AND category = #{category}
+	</delete>
+	
+	<!-- 찜 한 게시글 수 가져오기. -->
+	<select id = "dibsOnCnt"
+		resultType="Integer"
+		parameterType="String">
+		SELECT COUNT(dnum) 
+		FROM shfc_dibson 
+		WHERE uid = #{uid}
+	</select>
+	
+	<!-- 찜 한 여부 색상 보기 위한 데이터 가져오기. -->
+	<select id = "dibsOnPnum"
+		resultType="Integer"
+		parameterType="map">
+		SELECT spnum 
+		FROM shfc_dibson 
+		WHERE uid = #{uid} AND spnum = #{spnum}
+	</select>
+	
+		<!-- 추천 비추천 카운트 가져오기. -->
+	<select id = "likeDislikeCnt"
+		resultType="pet.main.vo.LikeDislikeVO">
+		SELECT lnum, uid, spnum, shfc_likedislike.like, dislike, SUM(shfc_likedislike.like) as sumlike, SUM(dislike) as sumdislike FROM shfc_likedislike;
+	</select>
+	
 
 </mapper>

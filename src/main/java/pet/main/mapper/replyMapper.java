@@ -25,10 +25,18 @@ public interface replyMapper {
 
 	int deleteReply(int i);
 
-	int updateReply(ReplyVO reply);
-
 	int deleteReply2(int i);
 
+	int updateReply(ReplyVO reply);
+
 	int updateViewCnt(int i);
+
+	int plusChildCnt(int parent);
+
+	int getParentScreenOrder(int parent);
+
+	int getReplyCnt(int num);
+
+	int minusChildCnt(int idx);
 
 }

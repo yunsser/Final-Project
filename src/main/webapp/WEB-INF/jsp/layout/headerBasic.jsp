@@ -27,15 +27,15 @@
 <!-- 네비바 시작 -->
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href="/">pet`mong</a>    
+    <a class="navbar-brand" href="/petmong">pet`mong</a>    
       <form class="d-flex">
       	<sec:authorize access="isAuthenticated()"> <!-- 권한에 관계없이 로그인 인증을 받은 경우 -->
 	      	<button id = "sbtn" type="button" class="btn btn-outline-primary" onclick ="location.href='/user/mypage?uid=${user.uid}'">Mypage</button>
-	      	<button id = "sbtn" type="button" class="btn btn-outline-primary" onclick ="location.href='/logout'">Log Out</button>
+	      	<button id = "sbtn" type="button" class="btn btn-outline-primary" onclick ="location.href='/petmong/logout'">Log Out</button>
       	</sec:authorize>
 		<sec:authorize access="isAnonymous()">
-	      	<button id = "sbtn" type="button" class="btn btn-outline-primary" onclick ="location.href='/loginForm'">Log In</button>
-	      	<button id = "sbtn" type="button" class="btn btn-outline-primary" onclick ="location.href='/signupForm'">Sign Up</button>
+	      	<button id = "sbtn" type="button" class="btn btn-outline-primary" onclick ="location.href='/petmong/loginForm'">Log In</button>
+	      	<button id = "sbtn" type="button" class="btn btn-outline-primary" onclick ="location.href='/petmong/signupForm'">Sign Up</button>
 		</sec:authorize>
       </form>
     </div>

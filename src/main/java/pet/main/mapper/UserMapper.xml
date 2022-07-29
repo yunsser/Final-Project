@@ -1,91 +1,154 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-        
+
 <mapper namespace="pet.main.mapper.UserMapper">
-<!-- 회원가입 기본정보 user테이블에 저장  -->
-	<insert id="signup"
-		parameterType="pet.main.vo.UserVO"
+	<!-- 회원가입 기본정보 user테이블에 저장 -->
+	<insert id="signup" parameterType="pet.main.vo.UserVO"
 		useGeneratedKeys="true" keyProperty="unum">
-		INSERT INTO user 
-		VALUES(null, #{uid}, #{upw}, #{name}, #{birth}, #{phone}, #{email}, #{zipcode}, #{addr}, #{detailAddr}, #{pet}, #{petsize}, #{role}, NOW(), #{provider}, #{providerId})
+		INSERT INTO user
+		VALUES(null, #{uid}, #{upw}, #{name}, #{birth}, #{phone}, #{email}, #{zipcode},
+		#{addr}, #{detailAddr}, #{pet}, #{petsize}, #{role}, NOW(),
+		#{provider}, #{providerId})
 	</insert>
-	
-<!-- 유저 프로필 파일정보 저장 -->	
-	<insert id ="userProfile"
- 		parameterType="map"
- 		useGeneratedKeys="true" keyProperty="pnum">
- 		INSERT INTO user_profile
- 		VALUES(null, #{uid}, #{fname}, #{fsize})
- 	</insert>
- 	
-<!-- 소셜 로그인 회원가입 처리.  -->
-	<insert id="signupSNS"
-		parameterType="pet.main.vo.UserVO"
+
+	<!-- 유저 프로필 파일정보 저장 -->
+	<insert id="userProfile" parameterType="map"
+		useGeneratedKeys="true" keyProperty="pnum">
+		INSERT INTO user_profile
+		VALUES(null, #{uid}, #{fname}, #{fsize})
+	</insert>
+
+	<!-- 소셜 로그인 회원가입 처리. -->
+	<insert id="signupSNS" parameterType="pet.main.vo.UserVO"
 		useGeneratedKeys="true" keyProperty="unum">
-		INSERT INTO user 
-		VALUES(null, #{uid}, #{upw}, #{name}, #{birth}, #{phone}, #{email}, #{zipcode}, #{addr}, #{detailAddr}, #{pet}, #{petsize}, #{role}, NOW(), #{provider}, #{providerId})
+		INSERT INTO user
+		VALUES(null, #{uid}, #{upw}, #{name}, #{birth}, #{phone}, #{email}, #{zipcode},
+		#{addr}, #{detailAddr}, #{pet}, #{petsize}, #{role}, NOW(),
+		#{provider}, #{providerId})
 	</insert>
- 	
-<!-- 로그인시 유저 정보 있는지 확인  -->	
-	<select id="findByUser"
-		parameterType="String"
+
+	<!-- 로그인시 유저 정보 있는지 확인 -->
+	<select id="findByUser" parameterType="String"
 		resultType="pet.main.vo.UserVO">
-		SELECT * 
-		FROM user 
-		WHERE uid = #{uid} 
-	</select>
-	
-<!-- 아이디 중복체크  -->
-	<select id="idCheck"
-		parameterType="String"
-		resultType="String">
-		SELECT uid 
-		FROM user 
-		WHERE uid = #{uid}	
-	</select>
-	
-<!-- 회원 프로필 사진이름 가져오기. -->
-	<select id="findByImg"
-		parameterType="String"
-		resultType="String">
-		SELECT fname 
-		FROM user_profile 
-		WHERE uid = #{uid}; 
+		SELECT *
+		FROM user
+		WHERE uid = #{uid}
 	</select>
 
-<!-- 회원 프로필 수정. -->
-	<update id="profileUpdate"
-		parameterType="map">
-		UPDATE user_profile 
-		SET fname = #{fname}, fsize = #{fsize} 
+	<!-- 아이디 중복체크 -->
+	<select id="idCheck" parameterType="String" resultType="String">
+		SELECT
+		uid
+		FROM user
+		WHERE uid = #{uid}
+	</select>
+
+	<!-- 회원 프로필 사진이름 가져오기. -->
+	<select id="findByImg" parameterType="String"
+		resultType="String">
+		SELECT fname
+		FROM user_profile
+		WHERE uid = #{uid};
+	</select>
+
+	<!-- 회원 프로필 수정. -->
+	<update id="profileUpdate" parameterType="map">
+		UPDATE user_profile
+		SET fname = #{fname}, fsize = #{fsize}
 		WHERE uid = #{uid}
 	</update>
 
-<!-- 회원정보 수정. -->
-	<update id="userUpdate"
-		parameterType="pet.main.vo.UserVO">
-		UPDATE user 
-		SET upw = #{upw}, birth = #{birth}, phone = #{phone}, email = #{email}, zipcode = #{zipcode}, addr = #{addr}, detailAddr = #{detailAddr}, pet = #{pet}, petsize = #{petsize}
+	<!-- 회원정보 수정. -->
+	<update id="userUpdate" parameterType="pet.main.vo.UserVO">
+		UPDATE user
+		SET upw = #{upw}, birth = #{birth}, phone = #{phone}, email = #{email},
+		zipcode = #{zipcode}, addr = #{addr}, detailAddr = #{detailAddr}, pet
+		= #{pet}, petsize = #{petsize}
 		WHERE uid = #{uid}
 	</update>
 
-<!-- 회원탈퇴 요청. -->
-	<delete id="userDelete"
-		parameterType="String">
-		DELETE 
-		FROM user 
-		WHERE uid = #{uid}
-	</delete>
-	
-<!-- 회원탈퇴시 회원프로필 삭제. -->
-	<delete id="profileDelete"
-		parameterType="String">
-		DELETE 
-		FROM user_profile 
+	<!-- 회원탈퇴 요청. -->
+	<delete id="userDelete" parameterType="String">
+		DELETE
+		FROM user
 		WHERE uid = #{uid}
 	</delete>
 
+	<!-- 회원탈퇴시 회원프로필 삭제. -->
+	<delete id="profileDelete" parameterType="String">
+		DELETE
+		FROM user_profile
+		WHERE uid = #{uid}
+	</delete>
+
+	<!-- 마이페이지 게시글 수 가져오기. -->
+	<select id="myBoardCnt" resultType="Integer"
+		parameterType="String">
+		SELECT SUM(total.CNT)
+		FROM
+		(SELECT COUNT(*) as CNT
+		FROM
+		hospital
+		WHERE author = #{uid}
+		UNION ALL
+		SELECT COUNT(*) as CNT
+		FROM share_facility
+		WHERE sh_name = #{uid}
+		) total;
+	</select>
+
+	<!-- 마이페이지 작성한 공유게시글 가져오기. -->
+	<select id="hlist" parameterType="String"
+		resultType="pet.main.vo.PostVO">
+		SELECT *
+		FROM final.hospital h
+		LEFT OUTER JOIN ( SELECT hpnum,
+		SUM(hos_likedislike.like) as sumlike , SUM(dislike) as sumdislike FROM
+		final.hos_likedislike GROUP BY hpnum) l
+		ON h.num = l.hpnum
+		WHERE author = #{uid}
+		ORDER BY num DESC
+	</select>
+
+	<!-- 마이페이지 작성한 후기게시글 가져오기. -->
+	<select id="slist" parameterType="String"
+		resultType="pet.main.vo.ShareFcVO">
+		SELECT *
+		FROM final.share_facility s
+		LEFT OUTER JOIN ( SELECT spnum,
+		SUM(shfc_likedislike.like) as sumlike , SUM(dislike) as sumdislike
+		FROM final.shfc_likedislike GROUP BY spnum) l
+		ON s.sh_num = l.spnum
+		WHERE sh_name = #{uid}
+		ORDER BY sh_num DESC
+	</select>
+
+
+	<!-- 마이페이지 찜한 공유게시글 가져오기 -->
+	<select id="dibsOnpList" 
+		parameterType="String"
+		resultType="pet.main.vo.PostVO">
+		SELECT num, d.sido, gugun, author, name, title, summernote, date, viewCnt, d.hpnum, sumlike, sumdislike
+		FROM (final.hospital h 
+		LEFT OUTER JOIN ( SELECT hpnum,  SUM(hos_likedislike.like) as sumlike , SUM(dislike) as sumdislike FROM final.hos_likedislike GROUP BY hpnum) l 
+		ON h.num = l.hpnum 
+		LEFT OUTER JOIN final.hos_dibson d 
+		ON h.num = d.hpnum ) 
+		WHERE d.uid = #{uid}
+	</select>
 	
+<!-- 마이페이지 찜한 후기게시글 가져오기 -->
+	<select id="dibsOnsList" 
+		parameterType="String"
+		resultType="pet.main.vo.ShareFcVO">
+		SELECT sh_num, sh_name, sh_title, sh_content, sh_date, sh_facSido, sh_facGugun, sh_facNM, sh_facRoadAdd, sh_facAdd, sh_facTel, sh_facCate, sh_viewCnt, sh_nickname, d.spnum, sumlike, sumdislike
+		FROM (final.share_facility s 
+		LEFT OUTER JOIN ( SELECT spnum,  SUM(shfc_likedislike.like) as sumlike , SUM(dislike) as sumdislike FROM final.shfc_likedislike GROUP BY spnum) l 
+		ON s.sh_num = l.spnum 
+		LEFT OUTER JOIN final.shfc_dibson d 
+		ON s.sh_num = d.spnum ) 
+		WHERE d.uid = #{uid}
+	</select>
 
 </mapper>

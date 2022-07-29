@@ -161,10 +161,10 @@
 	<p />
 	
 	<div class="input-group">
-		<label for="pet" class="col-sm-2 col-form-label">반려동물</label>
+		<label for="pet" class="col-sm-2 col-form-label">반려동물 (선택)</label>
 		<fieldset class="form-group">
 	      <div class="form-check">
-	        <input class="form-check-input" type="radio" id="pet" name = "pet" value="Y" checked="checked">
+	        <input class="form-check-input" type="radio" id="pet" name = "pet" value="Y">
 	          있다
 	      </div>
 	      <div class="form-check">
@@ -176,7 +176,7 @@
 	<p />
 	
 	<div class="input-group">
-		<label for="petsize" class="col-sm-2 col-form-label">반려동물 크기</label>
+		<label for="petsize" class="col-sm-2 col-form-label">반려동물 크기 (선택)</label>
 		<fieldset class="form-group">
 	      <div class="form-check">
 	        <input class="form-check-input" type="radio" id="petsize" name = "petsize" value="s" >
@@ -352,7 +352,7 @@ function kakaopost() {
 		
 		var formData = new FormData($("#signupForm")[0]);
 		$.ajax({
-			url : '/signup',
+			url : '/petmong/signup',
 			method : 'post',
 			enctype: 'multipart/form-data',
 			processData: false,
@@ -362,7 +362,7 @@ function kakaopost() {
 			dataType : 'json',
 			success : function(res){
 				alert(res.signup ? '회원가입 완료' : '실패!');
-					if(res.signup) location.href = '/loginForm';
+					if(res.signup) location.href = '/petmong/loginForm';
 			},
 			error : function(xhr, status, err) {
 				alert('에러 : ' + xhr + status + err);
@@ -393,7 +393,7 @@ function kakaopost() {
 		obj.uid = uid;
 		
 		$.ajax({
-			url : '/idCheck',
+			url : '/petmong/idCheck',
 			method : 'post',
 			cache : false,
 			data : obj,

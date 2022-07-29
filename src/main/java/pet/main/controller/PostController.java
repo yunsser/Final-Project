@@ -2,6 +2,7 @@ package pet.main.controller;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,6 +16,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -24,96 +26,109 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.SessionAttribute;
+import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.pagehelper.PageInfo;
 
 import pet.main.dao.PostDAO;
 import pet.main.svc.PostSVC;
+import pet.main.svc.ShareFcSVC;
 import pet.main.svc.TestSVC;
 import pet.main.vo.PageVO;
 import pet.main.svc.replyService;
 import pet.main.vo.PagingVO;
 import pet.main.vo.PostVO;
 import pet.main.vo.ReplyVO;
+import pet.main.vo.ShareFcVO;
 
 @Controller
-@RequestMapping("/post")
+@SessionAttributes("uid")
+@RequestMapping("/petmong/post")
 public class PostController {
 
 	@Autowired
 	PostSVC svc;
-	
+
 	@Autowired
-	private TestSVC codesvc;
-	
+	private ShareFcSVC codesvc;
+
 	@Autowired
 	PostDAO dao;
-	
+
 	@Autowired
 	ResourceLoader resourceLoader;
 
 	@Autowired
 	private replyService rService;
-//	공지사항 게시판 리스트 + 페이징
-	@GetMapping("/list")
-	public String noticeList(/*@SessionAttribute(name = "id", required = false)String id,*/  PagingVO vo, Model model,
-			@RequestParam(value = "nowPage", required = false) String nowPage,
-			@RequestParam(value = "cntPerPage", required = false) String cntPerPage) {
 
-		/*
-		 * if (id == null) { return "redirect:/post/home"; } else {
-		 */
-			int total = svc.count();
-			if (nowPage == null && cntPerPage == null) {
-				nowPage = "1";
-				cntPerPage = "15";
-			} else if (nowPage == null) {
-				nowPage = "1";
-			} else if (cntPerPage == null) {
-				cntPerPage = "15";
-			}
-			List<Map<String, String>> list = dao.getBoard();
-			model.addAttribute("list", list);
-			vo = new PagingVO(total, Integer.parseInt(nowPage), Integer.parseInt(cntPerPage));
-			model.addAttribute("paging", vo);
-			model.addAttribute("viewAll", svc.select(vo));
-			return "post/list";
-			/* } */
+//	게시판 리스트 + 페이징
+	@GetMapping("/list")
+	public String list(Model model,
+			@RequestParam(required = false) String uid,
+			@RequestParam(required = false, defaultValue = "1") int pageNum,
+			@RequestParam(name = "sido", required = false, defaultValue = "") String sido,
+			@RequestParam(name = "gugun", required = false, defaultValue = "") String gugun)
+			throws JsonProcessingException {
+
+		ObjectMapper objm = new ObjectMapper();
+		List codelist2 = codesvc.codeList();
+		String codeList = objm.writeValueAsString(codelist2);
+		model.addAttribute("codeList", codeList);
+		List<PostVO> list = svc.ShareFcList(sido, gugun);
+		model.addAttribute("list", list);
+		PageInfo<PostVO> pageInfo = svc.listpaging(pageNum, sido, gugun);
+		model.addAttribute("pageInfo", pageInfo);
+		//System.out.println(pageInfo.getList().get(0).getNum());
+		
+		List<Integer> hpnumList = new ArrayList<>();
+		for(int i = 0; i < pageInfo.getList().size(); i++ ){
+			hpnumList.add(svc.dibsOnPnum(uid, pageInfo.getList().get(i).getNum()));
+		}
+		//System.out.println(hpnumList.get(0));
+		model.addAttribute("hpnumList", hpnumList);
+
+		List codemap = codesvc.codeListMap();
+		List gugunmap = codesvc.gugunListMap(sido);
+		model.addAttribute("codemap", codemap);
+		model.addAttribute("gugunmap", gugunmap);
+		model.addAttribute("sido", sido);
+		model.addAttribute("gugun", gugun);
+		return "post/list";
+		/* } */
 
 	}
 
 //	게시판 글쓰기
 	@GetMapping("/board")
-	public String board(@RequestParam(name="gugunCD", required=false, defaultValue="")String gugunCD,
-			@RequestParam(name="code", required=false, defaultValue="")String code,
-			@RequestParam(name="sidoNm", required=false, defaultValue="")String sidoNm,
-			@RequestParam(name="gugunNm", required=false, defaultValue="")String gugunNm,
-			Model model) throws JsonProcessingException {
+	public String board(Model model, @RequestParam(name = "sido", required = false, defaultValue = "") String sido,
+			@RequestParam(name = "gugun", required = false, defaultValue = "") String gugun)
+			throws JsonProcessingException {
 		ObjectMapper objm = new ObjectMapper();
-		List list = codesvc.codeList();
+		List codelist2 = codesvc.codeList();
+		String codeList = objm.writeValueAsString(codelist2);
+		model.addAttribute("codeList", codeList);
+
 		List codemap = codesvc.codeListMap();
-		List gugunmap = codesvc.gugunListMap(code);
-        String codeList = objm.writeValueAsString(list);
-        model.addAttribute("codemap",codemap);
-        model.addAttribute("gugunmap",gugunmap);
-        model.addAttribute("codeList", codeList);
-        model.addAttribute("gugunCD", gugunCD);
-        model.addAttribute("code",code);
-        model.addAttribute("sidoNm", sidoNm);
-        model.addAttribute("gugunNm", gugunNm);
+		List gugunmap = codesvc.gugunListMap(sido);
+		model.addAttribute("codemap", codemap);
+		model.addAttribute("gugunmap", gugunmap);
+		model.addAttribute("sido", sido);
+		model.addAttribute("gugun", gugun);
+
 		return "post/board";
 
 	}
 
 	@PostMapping("/board")
 	@ResponseBody
-	public Map<String, Boolean> board(
-			@RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles, HttpServletRequest request, PostVO post){       
+	public Map<String, Boolean> board(@RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
+			HttpServletRequest request, PostVO post) {
 		Map<String, Boolean> map = new HashMap<>();
 		boolean added = svc.board(mfiles, request, post);
-		// System.out.println(mfiles);
+		System.out.println(mfiles);
 		map.put("added", added);
 		return map;
 
@@ -162,26 +177,44 @@ public class PostController {
 				.body(resource);
 	}
 
-//	게시판 수정화면보기
-	
+//	게시판 자세한 화면보기
 	@GetMapping("/detail")
-	public String detailBoard(String uid, @RequestParam int num,
+	public String detailBoard(@RequestParam(required = false)String uid, @RequestParam(required = false) int num,
+			@RequestParam(required=false, defaultValue = "1")int pageNum,
 			Model model) { // 일치시켜주면 // 들어감
+		svc.viewCnt(num);
 		PostVO post = svc.detailNum(num);
+		model.addAttribute("replyList", rService.getReplyList(num));
+		model.addAttribute("hpnum", svc.dibsOnPnum(uid,num));
 		model.addAttribute("post", post);
-		rService.updateViewCnt(post.getNum()); // 게시판 조회수증가
-//		String s = "scott"; // 임의의 uid
-//		model.addAttribute("uid", s); // 현재 접속자의 uid 
-		List<ReplyVO> replyList = rService.getReplyList(post.getNum()); // 해당 게시판의 댓글리스트를 불러온다
-		model.addAttribute("replyList", replyList); // 댓글리스트
+		model.addAttribute("likeDislikeCnt", svc.likeDislikeCnt());
+		model.addAttribute("replyCnt", rService.getReplyCnt(num));
+		
+		PageInfo<ReplyVO> pageInfo = new PageInfo<>(rService.getReplyListPage(pageNum, num));
+		model.addAttribute("pageInfo", pageInfo);
 		return "post/detail";
 	}
 
 	@GetMapping("/edit")
-	public String detailedit(@RequestParam int num,
-			Model model) {
+	public String detailedit(@RequestParam int num, Model model,
+			@RequestParam(name = "sido", required = false, defaultValue = "") String sido,
+			@RequestParam(name = "gugun", required = false, defaultValue = "") String gugun)
+			throws JsonProcessingException {
 		PostVO post = svc.detailNum(num);
 		model.addAttribute("post", post);
+
+		ObjectMapper objm = new ObjectMapper();
+		List codelist2 = codesvc.codeList();
+		String codeList = objm.writeValueAsString(codelist2);
+		model.addAttribute("codeList", codeList);
+
+		List codemap = codesvc.codeListMap();
+		List gugunmap = codesvc.gugunListMap(sido);
+		model.addAttribute("codemap", codemap);
+		model.addAttribute("gugunmap", gugunmap);
+		model.addAttribute("sido", sido);
+		model.addAttribute("gugun", gugun);
+
 		return "post/edit";
 	}
 
@@ -189,9 +222,9 @@ public class PostController {
 	@PostMapping("/update")
 	@ResponseBody
 	public Map<String, Boolean> updateBoard(@RequestParam(name = "mfiles", required = false) MultipartFile[] mfiles,
-			HttpServletRequest request, PostVO post, List<String> delfiles, Model model) {
+			HttpServletRequest request, PostVO post, Model model) {
 		Map<String, Boolean> map = new HashMap<>();
-		boolean updated = svc.updated(request, post, mfiles, delfiles);
+		boolean updated = svc.updated(request, post, mfiles);
 		map.put("updated", updated);
 		return map;
 	}
@@ -211,6 +244,37 @@ public class PostController {
 		boolean deleteFileInfo = svc.deleteFileInfo(delfiles);
 		Map<String, Boolean> map = new HashMap<>();
 		map.put("deleteFileInfo", deleteFileInfo);
+		return map;
+	}
+
+	// 게시글 추천하기.
+	@Transactional(rollbackFor = { Exception.class })
+	@PostMapping("/like")
+	public @ResponseBody Map<String, Boolean> like(@RequestParam(required = false) String uid,
+			@RequestParam(required = false) int hpnum, @RequestParam(required = false) String sido) {
+		Map<String, Boolean> map = new HashMap<>();
+		// System.out.println(sido);
+		map.put("like", svc.like(uid, hpnum, sido));
+		return map;
+	}
+
+	// 게시글 비추천하기.
+	@Transactional(rollbackFor = { Exception.class })
+	@PostMapping("/dislike")
+	public @ResponseBody Map<String, Boolean> dislike(@RequestParam(required = false) String uid,
+			@RequestParam(required = false) int hpnum, @RequestParam(required = false) String sido) {
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("dislike", svc.dislike(uid, hpnum, sido));
+		return map;
+	}
+
+	// 게시글 찜하기.
+	@Transactional(rollbackFor = { Exception.class })
+	@PostMapping("/dibsOn")
+	public @ResponseBody Map<String, Boolean> dibsOn(@RequestParam(required = false) String uid,
+			@RequestParam(required = false) int hpnum, @RequestParam(required = false) String sido) {
+		Map<String, Boolean> map = new HashMap<>();
+		map.put("dibsOn", svc.dibsOn(uid, hpnum, sido));
 		return map;
 	}
 }

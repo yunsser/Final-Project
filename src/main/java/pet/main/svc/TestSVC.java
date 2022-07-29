@@ -13,6 +13,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -232,7 +233,7 @@ public class TestSVC {
 								
 							}
 							
-							else if(gugunCD.equals("none") && (BPLCNM.contains(keyword)) ) {
+							else if(gugunCD.equals("none") && (BPLCNM.toUpperCase().contains(keyword.toUpperCase())) ) {
 									//System.out.println("gugunCD null");
 									Seoul_hp_VO data2 = new Seoul_hp_VO();
 									//System.out.println("키워드 검색");
@@ -274,7 +275,7 @@ public class TestSVC {
 								
 							}
 							
-							else if(OPNSFTEAMCODE.equals(gugunCD) && (BPLCNM.contains(keyword))) {
+							else if(OPNSFTEAMCODE.equals(gugunCD) && (BPLCNM.toUpperCase().contains(keyword.toUpperCase()))) {
 								Seoul_hp_VO data3 = new Seoul_hp_VO();
 								data3.setMGTNO(MGTNO);
 								data3.setList_total_count(list_total_count);
@@ -648,7 +649,7 @@ public class TestSVC {
 						
 					}
 					
-					else if(SITEWHLADDR.contains(codename) && gugunCD.equals("none") && (BPLCNM.contains(keyword)) ) {
+					else if(SITEWHLADDR.contains(codename) && gugunCD.equals("none") && (BPLCNM.toUpperCase().contains(keyword.toUpperCase())) ) {
 						
 			        	    CsvTestVO data2 = new CsvTestVO();
 	
@@ -683,7 +684,7 @@ public class TestSVC {
 						
 					}
 					
-					else if(OPNSFTEAMCODE.equals(gugunCD) && (BPLCNM.contains(keyword))) {
+					else if(OPNSFTEAMCODE.equals(gugunCD) && (BPLCNM.toUpperCase().contains(keyword.toUpperCase()))) {
 		        	    CsvTestVO data4 = new CsvTestVO();
 	
 						data4.setMGTNO(MGTNO);
@@ -773,6 +774,34 @@ public class TestSVC {
 	public boolean updateReview(ReviewVO review) {
 		return reviewdao.updateReview(review);
 	}
+	
+	// 병원 찜하기.
+	public Boolean dibsOn(String uid, String hp_mgtno, String hp_name, String hp_tel, String hp_roadadd, String hp_add, String hp_sido, String hp_gugun) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("uid", uid);
+		map.put("hp_mgtno", hp_mgtno);
+		map.put("hp_name", hp_name);
+		map.put("hp_tel", hp_tel);
+		map.put("hp_roadadd", hp_roadadd);
+		map.put("hp_add", hp_add);
+		map.put("hp_sido", hp_sido);
+		map.put("hp_gugun", hp_gugun);
+		
+		if(dao.dibsOnCancle(map) > 0) {
+			return false;
+		}
+		return dao.dibsOn(map) > 0;
+	}
+	
+	// 찜 한 여부 색상 보기 위한 데이터 가져오기.
+	// 반환값이 null이 될 수 있기 때문에 반환 자료형 타입을 Integer로 변경. 
+	public String dibsOnPnum(String uid, String hp_mgtno) {
+		Map<String, Object> map = new HashMap<>();
+		map.put("uid", uid);
+		map.put("hp_mgtno", hp_mgtno);
+		return dao.dibsOnPnum(map);
+	}
+	
 	
 	
 }

@@ -14,7 +14,7 @@
 	
 	<insert id="addReview"
 		parameterType="pet.main.vo.ReviewVO">
-		INSERT INTO review VALUES(null, #{rv_title}, #{rv_contents}, #{rv_id}, #{rv_mgtno}, NOW())
+		INSERT INTO review VALUES(null, #{rv_title}, #{rv_contents}, #{rv_id}, #{rv_mgtno}, NOW(), #{rv_name})
 	</insert>
 	
 	<select id="getReviewTotal"

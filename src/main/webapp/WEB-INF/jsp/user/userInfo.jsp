@@ -64,7 +64,7 @@
 			    <div class="input-group">
 			      <label for="uid" class="col-sm-2 col-form-label">아이디</label>
 			      <div class="col-sm-8">
-			        <input type="text" class="form-control" id="uid" name = "uid" value = "${user.uid}" disabled="disabled" />  
+			        <input type="text" class="form-control" id="uid" name = "uid" value = "${u.uid}" disabled="disabled" />  
 			      </div>
 				</div>
 			    <p />
@@ -72,35 +72,65 @@
 						<span id="checkId"></span>
 				</div>
 				<p />
-	
-				<div class="input-group">
-					<label for="upw" class="col-sm-2 col-form-label">새 비밀번호</label>
-					<div class="col-sm-8">
-						<input type="password" class="form-control" id="upw" name = "upw" value = "${user.upw}" placeholder="최소 8 자, 하나 이상의 문자, 하나의 숫자 및 하나의 특수 문자" />
-					</div>
-				</div>
-				 <p />
-				<div class="col-md-6 offset-md-3">
-					<span id="checkUpw"></span>
-				</div>
-				<p />
 				
-				<div class="input-group">
-					<label for="confirmUpw" class="col-sm-2 col-form-label">새 비밀번호 확인</label>
-					<div class="col-sm-8">
-						<input type="password" class="form-control" id="confirmUpw" value = "${user.upw}" placeholder="비밀번호를 한번 더 입력해 주세요." />
-					</div>
-				</div>
-				<p />
-				<div class="col-md-6 offset-md-3">
-					<span id="checkUpw2"></span>
-				</div>
-				<p />
+				<c:choose>
+					<c:when test="${u.provider != null}">
+						<div class="input-group">
+							<label for="upw" class="col-sm-2 col-form-label">새 비밀번호</label>
+							<div class="col-sm-8">
+								<input type="password" class="form-control" id="upw" name = "upw" value = "${u.upw}" placeholder="최소 8 자, 하나 이상의 문자, 하나의 숫자 및 하나의 특수 문자" readonly="readonly" />
+							</div>
+						</div>
+						 <p />
+						<div class="col-md-6 offset-md-3">
+							<span id="checkUpw"></span>
+						</div>
+						<p />
+						
+						<div class="input-group">
+							<label for="confirmUpw" class="col-sm-2 col-form-label">새 비밀번호 확인</label>
+							<div class="col-sm-8">
+								<input type="password" class="form-control" id="confirmUpw" value = "${u.upw}" placeholder="비밀번호를 한번 더 입력해 주세요." readonly="readonly" />
+							</div>
+						</div>
+						<p />
+						<div class="col-md-6 offset-md-3">
+							<span id="checkUpw2"></span>
+						</div>
+						<p />
+					</c:when>
+					<c:otherwise>
+						<div class="input-group">
+							<label for="upw" class="col-sm-2 col-form-label">새 비밀번호</label>
+							<div class="col-sm-8">
+								<input type="password" class="form-control" id="upw" name = "upw" value = "${u.upw}" placeholder="최소 8 자, 하나 이상의 문자, 하나의 숫자 및 하나의 특수 문자" />
+							</div>
+						</div>
+						 <p />
+						<div class="col-md-6 offset-md-3">
+							<span id="checkUpw"></span>
+						</div>
+						<p />
+						
+						<div class="input-group">
+							<label for="confirmUpw" class="col-sm-2 col-form-label">새 비밀번호 확인</label>
+							<div class="col-sm-8">
+								<input type="password" class="form-control" id="confirmUpw" value = "${u.upw}" placeholder="비밀번호를 한번 더 입력해 주세요." />
+							</div>
+						</div>
+						<p />
+						<div class="col-md-6 offset-md-3">
+							<span id="checkUpw2"></span>
+						</div>
+						<p />
+					</c:otherwise>
+				</c:choose>
+				
 				
 				<div class="input-group">
 					<label for="name" class="col-sm-2 col-form-label">이름</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="name" name = "name" value = "${user.name}" disabled="disabled" />
+						<input type="text" class="form-control" id="name" name = "name" value = "${u.name}" disabled="disabled" />
 					</div>
 				</div>
 				<p />
@@ -108,7 +138,7 @@
 				<div class="input-group">
 					<label for="birth" class="col-sm-2 col-form-label">생년월일</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="birth" name = "birth" value = "${user.birth}" />
+						<input type="text" class="form-control" id="birth" name = "birth" value = "${u.birth}" />
 					</div>
 				</div>
 				<p />
@@ -116,7 +146,7 @@
 				<div class="input-group">
 					<label for="phone" class="col-sm-2 col-form-label">전화번호</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="phone" name = "phone" value ="${user.phone }" placeholder=" - 제외 ex) 01011112222" />
+						<input type="text" class="form-control" id="phone" name = "phone" value ="${u.phone }" placeholder=" - 제외 ex) 01011112222" />
 					</div>
 				</div>
 				<p />
@@ -124,7 +154,7 @@
 				<div class="input-group">
 					<label for="email" class="col-sm-2 col-form-label">email</label>
 					<div class="col-sm-8">
-						<input type="email" class="form-control" id="email" name = "email" value = "${user.email}" placeholder="ex) example@abc.com" />
+						<input type="email" class="form-control" id="email" name = "email" value = "${u.email}" placeholder="ex) example@abc.com" />
 					</div>
 				</div>
 				<p />
@@ -132,7 +162,7 @@
 				<div class="input-group">
 			      <label for="zipcode" class="col-sm-2 col-form-label">우편번호</label>
 			      <div class="col-sm-3">
-			        <input type="text" class="form-control" id="zipcode" name = "zipcode" value = "${user.zipcode}" placeholder="우편번호" />
+			        <input type="text" class="form-control" id="zipcode" name = "zipcode" value = "${u.zipcode}" placeholder="우편번호" />
 			      </div>
 			      <div class="input-group-addon input-group-button">
 			        <button id = "postbts" type="button" 
@@ -145,7 +175,7 @@
 				<div class="input-group">
 					<label for="address" class="col-sm-2 col-form-label">주소</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="addr" name = "addr" value = "${user.addr}" placeholder="주소를 입력해주세요." />
+						<input type="text" class="form-control" id="addr" name = "addr" value = "${u.addr}" placeholder="주소를 입력해주세요." />
 					</div>
 				</div>
 				<p />
@@ -153,7 +183,7 @@
 				<div class="input-group">
 					<label for="detailAddr" class="col-sm-2 col-form-label">상세주소</label>
 					<div class="col-sm-8">
-						<input type="text" class="form-control" id="detailAddr" name = "detailAddr" value = "${user.detailAddr}" placeholder="상세주소를 입력해주세요." />
+						<input type="text" class="form-control" id="detailAddr" name = "detailAddr" value = "${u.detailAddr}" placeholder="상세주소를 입력해주세요." />
 					</div>
 				</div>
 				<p />
@@ -196,7 +226,7 @@
 				<div class="form-row text-center">
 				    <div class="col-12">
 						    <button type="submit" class="btn btn-outline-success">수정</button>
-						    <button type="button" class="btn btn-outline-primary" onclick ="location.href='/user/mypage?uid=${user.uid}'">취소</button>
+						    <button type="button" class="btn btn-outline-primary" onclick ="location.reload();">취소</button>
 					
 					</div>
 					<p />
@@ -227,6 +257,7 @@ function kakaopost() {
 }
 </script>
 <!-- 주소 api 끝 -->
+
 <script type="text/javascript">
 
 	// 프로필 사진 업로드 버튼 실행
@@ -351,7 +382,7 @@ function kakaopost() {
 			dataType : 'json',
 			success : function(res){
 				alert(res.updated ? '회원정보 수정완료' : '실패!');
-					if(res.updated) location.href = '/user';
+					if(res.updated) location.href = '/user/mypage';
 			},
 			error : function(xhr, status, err) {
 				alert('에러 : ' + xhr + status + err);

@@ -10,12 +10,18 @@ import lombok.Data;
 @Data
 public class PostVO {
 	private int num;
-	private String category;
+	private String sido;
+	private String gugun;
 	private String title;
-	private String author;
+	private String author; // id
+	private String name; // 이름
 	private String summernote;
 	private Date date;
-	private int count;
+	private int viewCnt;
+	private int hpnum;
+	private int sumlike;
+	private int sumdislike;
+	
 	
 	public List<AttachVO> attach = new ArrayList<>();
 	

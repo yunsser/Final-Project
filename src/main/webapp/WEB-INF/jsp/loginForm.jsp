@@ -80,7 +80,7 @@
 	<!-- 			    </div> -->
 				    <button type = "submit" class="w-100 btn btn-lg btn-outline-secondary" style = "margin-top : 0.5em;">로그인</button>
 				</form>
-				    <button id = "signBtn" class="w-100 btn btn-lg btn-outline-success" type="button" onclick = "location.href = '/signupForm'">회원가입</button>
+				    <button id = "signBtn" class="w-100 btn btn-lg btn-outline-success" type="button" onclick = "location.href = '/petmong/signupForm'">회원가입</button>
 				    
 				    <!-- 소설로그인 시작 -->
 	  					<div class="hr-sect">
@@ -106,7 +106,7 @@
 function login(){
 			var serData = $('#loginForm').serialize();
 			$.ajax({
-				url:'/login',
+				url:'/petmong/login',
 				method:'post',
 				cache:false,
 				data:serData,
@@ -121,10 +121,10 @@ function login(){
 				success : function(json, statusText, xhr, $form) {
 					if (json.success == true){
 						alert('로그인성공!')
-						var referrer = document.referrer;
-						document.location.href = referrer;
-						//var url = json.returnUrl || './';
-						//document.location.href = url;
+						/* var referrer = document.referrer;
+						document.location.href = referrer; */
+						var url = json.returnUrl || './';
+						document.location.href = url;
 					} else {
 						alert(json.message);
 					}

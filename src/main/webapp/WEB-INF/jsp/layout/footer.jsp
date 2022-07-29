@@ -5,7 +5,7 @@
 			            <div class = "container">
 			                <p class="text-center ">
 			                    <medium><strong>pet`mong</strong></medium><br>
-			                    <small>ㆍ대표 : pet`mong ㆍ 주소 : 종각 ㆍ 사업자등록번호 : 123-12-12345 ㆍ 전화 : 02-123-1234</small><br>
+			                    <small>ㆍ팀명 : pet`mong ㆍ 주소 : 종각 ㆍ 사업자등록번호 : 123-12-12345 ㆍ 전화 : 02-123-1234</small><br>
 			                    <small>Copyrightⓒ pet`mong.com All rights reserved.</small>
 			                </p>
 			            </div>

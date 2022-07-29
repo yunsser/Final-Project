@@ -11,5 +11,6 @@ public class ReviewVO {
 	private String rv_id;
 	private String rv_mgtno;
 	private String rv_date;
+	private String rv_name; // 이름
 
 }

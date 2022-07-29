@@ -23,15 +23,15 @@
 	src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.11/summernote-bs4.js"></script>
 <!-- include summernote-ko-KR -->
 <script src="/resources/js/summernote-ko-KR.js"></script>
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"
-integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
-<script src="https://code.jquery.com/jquery-3.4.1.js"
-  integrity="sha256-WpOohJOqMqqyKL9FccASB9O0KwACQJpFTUBLTYOVvVU="
-  crossorigin="anonymous"></script>
 <style>
 #addform {
 	width: 62%;
 	margin: auto;
+}
+
+.cate_wrap {
+	display: inline-flex;
+	margin-bottom: 1em;
 }
 </style>
 
@@ -74,10 +74,36 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 			return false;
 		}
 
+		var code = $('#code').val();
+		if(code == 'none'){
+			alert("시도를 선택해주세요");
+			return false;
+		}
+		var gugunCD = $('#gugunCD').val();
+		if(gugunCD == 'none'){
+			alert("구군을 선택해주세요");
+			return false;
+		}
+		
+		var title = $('#title').val();
+		if(title == ""){
+			alert("제목를 입력해주세요");
+			return false;
+		}
+		
+		var summernote = $('#summernote').val();
+		if(summernote == ""){
+			alert("내용를 입력해주세요");
+			return false;
+		}
+		
 		var formData = new FormData($("#addform")[0]);
 
+		var a = $('#addform').serialize();
+		//alert(a);
+		
 		$.ajax({
-			url : '/post/board',
+			url : '/petmong/post/board',
 			method : 'post',
 			enctype : 'multipart/form-data',
 			cache : false,
@@ -91,7 +117,7 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 				} else {
 					alert('저장 실패');
 				}
-				location.href = "/post/list";
+				location.href = "/petmong/post/list";
 			},
 			error : function(xhr, status, err) {
 				alert('err' + err);
@@ -127,62 +153,41 @@ integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="ano
 </script>
 
 
-<form name="addform" id="addform" role="form" method="post" onsubmit="return add();" enctype="multipart/form-data">
-
-<input type = "text" id="sidoNm">
-<input type = "text" id="gugunNm">
-<label for="cateCodeA">지역 분류 카테고리 </label><input type="hidden" id="cateCodeA" name="cateCodeA" class="data"><p></p>
-<div class="cate_wrap"><select class="cate1" name="code" style="width:130px;height:30px;" id="data" >
-<option selected value='none' id="sisi">시/도 선택</option></select></div>
-
-
-
-
-
-<div class="cate_wrap"><select class="cate2" name="code" style="width:130px;height:30px;" id="gugubCd" >
-<option selected value='none'>군/구 선택</option></select></div>
-
-
-
-<%--
- <option selected value='none'>시/도 선택</option>
-<c:forEach var="codemap" items="${codemap}">
-<option value="${codemap.code}" ${code == codemap.sidoNm ? "selected":""}>
-${codemap.sidoNm}
-</option>
-</c:forEach>
-</select>
-<select class="cate2" name="gugunCD"  style="width:130px;height:30px;"  id="gugunCD" >
-<option value='none'>군/구 선택</option>
-<c:forEach var="gugunmap" items="${gugunmap}">
-<option value="${gugunmap.gugunNm}" ${gugunCD == gugunmap.gugunNm ? "selected":""} >
-${gugunmap.gugunNm}
-</option>
-</c:forEach>
-</select>
-</div>
- --%>
-
-	<div class="form-group row">
+<form name="addform" id="addform" role="form" method="post"
+	onsubmit="return add();" enctype="multipart/form-data">
+	<div class="search">
+		<p></p>	
+		<input type="hidden" id="cateCodeA" name="cateCodeA" class="data">
+		<p></p>
+		<input type="hidden" id="pageNum" name="pageNum" value="${pageNum}">
 		<label for="select" class="col-sm-2 col-form-label"
-			style="font-size: 19px;">장소</label>
-		<div class="col-sm-10">
-		<input type="text" class="form-control" id="place_name" name="place_name">
-		<input type="text" class="form-control" id="road_address_name" name="road_address_name">
-		<input type="text" class="form-control" id="address_name" name="address_name">
-		<input type="text" class="form-control" id="phone" name="phone">
-	</p>
-		<%--
-		 <button type ="button" id = "kakaomap">장소 검색</button>
-		 --%>
-		<input id="newwin" name="newwin" type="button" value="장소 검색" onclick="showPopup();">
+			style="font-size: 19px;">구 선택</label>	
+		<div class="cate_wrap">
+			<select class="form-select" name="sido" id="code"
+				style="width: 133px; height: 40px;">
+				<option selected value='none'>시/도 선택</option>
+				<c:forEach var="codemap" items="${codemap}">
+					<option value="${codemap.sidoCd}"
+						${sido == codemap.sidoCd ? "selected":""}>
+						${codemap.sidoNm}</option>
+					<!-- 값 -->
+				</c:forEach>
+			</select> <select class="form-select" name="gugun"
+				style="width: 133px; height: 40px;" id="gugunCD">
+				<option value='none'>군/구 선택</option>
+				<c:forEach var="gugunmap" items="${gugunmap}">
+					<option value="${gugunmap.gugunNm}"
+						${gugun == gugunmap.gugunNm ? "selected":""}>
+						${gugunmap.gugunNm}</option>
+					<!-- 값 -->
+				</c:forEach>
+			</select>
 		</div>
 	</div>
-	</p>
- 
+
 	<div class="form-group row">
 		<label for="title" class="col-sm-2 col-form-label"
-			style="font-size: 19px;">글내용</label>
+			style="font-size: 19px;">제목</label>
 		<div class="col-sm-10">
 			<input type="text" class="form-control" id="title" name="title">
 		</div>
@@ -192,19 +197,22 @@ ${gugunmap.gugunNm}
 		<label for="author" class="col-sm-2 col-form-label"
 			style="font-size: 19px;">작성자</label>
 		<div class="col-sm-10">
-			<input type="text" class="form-control" id="author" name="author"
-				value="${user.user.uid}" readonly>
+			<input type="text" class="form-control" id="name" name="name"
+				value="${user.user.name}" readonly>
 			<!-- readonly -->
 		</div>
 	</div>
+	
+	<input type="hidden" id="author" name="author" value="${user.user.uid }">
 	  
 	<div class="form-group">
 		<textarea class="form-control" id="summernote" name="summernote"></textarea>
 	</div>
 	  
-	<div class="mb-3"><input type="file"
-			class="form-control" aria-label="file example" name="mfiles"
-			multiple="multiple" id="image" onchange="setThumbnail(event);" accept="image/*" >
+	<div class="mb-3">
+		<input type="file" class="form-control" aria-label="file example"
+			name="mfiles" multiple="multiple" id="image"
+			onchange="setThumbnail(event);" accept="image/*">
 		<div class="mb-3"
 			style="width: 96%; margin-left: 2%; padding-top: 14px; padding-right: 24px;"
 			id="image_container"></div>
@@ -214,24 +222,10 @@ ${gugunmap.gugunNm}
 
 	<button type="submit" id="submit" name="submit"
 		class="btn btn-outline-primary">글작성</button>
-		
+
 </form>
 
 <script>
-var myWindow = window.onload = function(){
-	document.getElementById("kakaomap").onclick = function(){
-		window.open("/map", "장소 검색","width=1000px,height=500px,top=200px;");
-		
-	}
-};
-
-function showPopup(){
-	window.open("/map","팝업 테스트","width=1000, height=1000, top=10, left=10");
-};
-        
-    </script>
-    
-    <script>
    let codeList = JSON.parse('${codeList}');
   
    let cate1Array = new Array();
@@ -239,8 +233,8 @@ function showPopup(){
    let cate1Obj = new Object();
    let cate2Obj = new Object();
    
-   let cateSelect1 = $(".cate1");      
-   let cateSelect2 = $(".cate2");
+   let cateSelect1 = $("#code");      
+   let cateSelect2 = $("#gugunCD");
    
    /* 카테고리 배열 초기화 메서드 */
    
@@ -281,7 +275,7 @@ for(let i = 0; i < codeList.length; i++){
    
    /* 대분류 <option> 태그 */
    for(let i = 0; i < cate1Array.length; i++){
-	   cateSelect1.append("<option value='"+cate1Array[i].code+"'>" + cate1Array[i].sidoNm + "</option>");
+      //cateSelect1.append("<option value='"+cate1Array[i].sidoCd+"'>" + cate1Array[i].sidoNm + "</option>");
    }
    
    /* 중분류 <option> 태그 */
@@ -294,18 +288,18 @@ for(let i = 0; i < codeList.length; i++){
    
       for(let i = 0; i < cate2Array.length; i++){
          if(selectVal1 == cate2Array[i].parent){
-        	 cateSelect2.append("<option value='"+cate2Array[i].gugunCd+"'>" + cate2Array[i].gugunNm + "</option>")
-        	 	
+            cateSelect2.append("<option value='"+cate2Array[i].gugunNm+"'>" + cate2Array[i].gugunNm + "</option>")
+               
             //cateSelect2.append("<option value='"+cate2Array[i].gugunCd+"'>" + cate2Array[i].gugunNm + "</option>")
-            //location.href = "/code?gugunCD="+cate2Array[i].gugunCd;
+            //location.href = "/test/code?gugunCD="+cate2Array[i].gugunCd;
          }
       }      
    });
    
    $(cateSelect2).on("change",function(){
-	      let selectVal2 = $(this).find("option:selected").val();
-	      
-	 });   
+         let selectVal2 = $(this).find("option:selected").val();
+         
+    });   
    
 
    

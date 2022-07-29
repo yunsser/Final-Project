@@ -65,7 +65,7 @@ function del_board(num) {
 	/* alert(obj.uid); */
 
 	$.ajax({
-		url: '/post/file/delete',
+		url: '/petmong/post/file/delete',
 		method: 'post',
 		cache: false,
 		data: obj,
@@ -96,10 +96,10 @@ function updateBoard() {
 		return false;
 	}
 	var formData = new FormData($("#updateForm")[0]);
-	formData.append("delfiles", delfiles);
+	//formData.append("delfiles", delfiles);
 	
 	$.ajax({
-		url: '/post/update',
+		url: '/petmong/post/update',
 		method: 'post',
 		enctype: 'multipart/form-data',
 		cache: false,
@@ -113,7 +113,7 @@ function updateBoard() {
 			} else {
 				alert('저장 실패');
 			}
-			location.href = "/post/list";
+			location.href = "/petmong/post/list";
 		},
 		error: function(xhr, status, err) {
 			alert('err' + err);
@@ -162,15 +162,37 @@ function setThumbnail(event) {
 			<p>
 			<div name="addForm" id="form">
 
-				<div class="form-group row">
-					<label for="author" class="col-sm-2 col-form-label"
-						style="font-size: 19px;">카테고리</label>
-					<div class="col-sm-10">
-						<input type="text" class="form-control" id="category" name="category"
-							value="${post.category}" readonly>
-						<!-- readonly -->
-					</div>
+				<div class="search">
+					<p></p>
+					<input type="hidden" id="cateCodeA" name="cateCodeA" class="data">
+					<p></p>
+					<input type="hidden" id="pageNum" name="pageNum" value="${pageNum}">
+					<label for="select" class="col-sm-2 col-form-label"
+						style="font-size: 19px; float: left;">구 선택</label>
+					<!-- <div class="cate_wrap" style="display: inline-block;"> -->
+						<select class="form-select" name="sido" id="code"
+							style="width: 133px; height: 40px; float: left; margin-right: 5px;">
+							<option selected value="none">${post.sido}</option>
+							<c:forEach var="codemap" items="${codemap}">
+								<option value="${codemap.sidoCd}"
+									${sido == codemap.sidoCd ? "selected":""}>
+									${codemap.sidoNm}</option>
+								<!-- 값 -->
+							</c:forEach>
+						</select> <select class="form-select" name="gugun"
+							style="width: 133px; height: 40px;" id="gugunCD">
+							<option value='none'>${post.gugun}</option>
+							<c:forEach var="gugunmap" items="${gugunmap}">
+								<option value="${gugunmap.gugunNm}"
+									${gugun == gugunmap.gugunNm ? "selected":""}>
+									${gugunmap.gugunNm}</option>
+								<!-- 값 -->
+							</c:forEach>
+							</select>
+					<!-- </div> -->
 				</div>
+
+				<div style="clear: both;"></div>
 
 
 				<div class="form-group row">
@@ -186,20 +208,20 @@ function setThumbnail(event) {
 					<label for="author" class="col-sm-2 col-form-label"
 						style="font-size: 19px;">작성자</label>
 					<div class="col-sm-10">
-						<input type="text" class="form-control" id="author" name="author"
-							value="${post.author}" readonly>
+						<input type="text" class="form-control" id="name" name="name"
+							value="${post.name}" readonly>
 						<!-- readonly -->
 					</div>
 				</div>
 
 
+				<input type="hidden" id="author" name="author" value="${post.author}">
 
 
 				<div class="form-group">
 					<label for="content">내용</label>
 					<textarea class="form-control" id="summernote" name="summernote">${post.summernote}</textarea>
 				</div>
-
 
 				<div>
 					<!-- class="form-control" -->
@@ -213,7 +235,7 @@ function setThumbnail(event) {
 									maxFractionDigits="0" />
 								<div id="${f.att_num}">
 									<span class="form-control"> <a
-										href="/post/file/download/${f.att_num}">${f.filename}</a>
+										href="/petmong/post/file/download/${f.att_num}">${f.filename}</a>
 										[${kilo}kb] <img src="/upload/${f.filename}" width="100px"
 										height="100px" alt="" class="thumb" /> <a class="link_del"
 										href="javascript:del_file(${f.att_num});">삭제</a></span>
@@ -231,14 +253,14 @@ function setThumbnail(event) {
 
 
 			</div>
-			
+
 			<div id="count" name="count" style="display: none" placeholder="0"></div>
 
 			<!-- 수정 목록 버튼 -->
 			<div class="btlistsav">
 				<button type="submit" class="btn btn-sm btn-primary">완료</button>
 				<button type="button" class="btn btn-sm btn-primary"
-					onclick="location.href='/post/list'">목록</button>
+					onclick="location.href='/petmong/post/list?uid=${user.user.uid}'">목록</button>
 			</div>
 
 		</form>
@@ -246,5 +268,82 @@ function setThumbnail(event) {
 
 	</div>
 </article>
+
+<script>
+let codeList = JSON.parse('${codeList}');
+
+let cate1Array = new Array();
+let cate2Array = new Array();
+let cate1Obj = new Object();
+let cate2Obj = new Object();
+
+let cateSelect1 = $("#code");      
+let cateSelect2 = $("#gugunCD");
+
+/* 카테고리 배열 초기화 메서드 */
+
+
+function makeCateArray(obj,array,codeList, tier){
+for(let i = 0; i < codeList.length; i++){
+   if(codeList[i].tier == tier){
+      
+      obj = new Object();
+      
+      obj.code = codeList[i].code;
+      obj.sidoNm = codeList[i].sidoNm;
+      obj.gugunNm = codeList[i].gugunNm;
+      obj.parent = codeList[i].parent;
+      obj.gugunCd = codeList[i].gugunCd;
+      
+      array.push(obj);            
+      
+   }
+}   
+}
+ 
+
+$(document).ready(function(){
+   console.log(cate1Array);
+   
+});
+
+/* 배열 초기화 */
+
+makeCateArray(cate1Obj,cate1Array,codeList,1);
+makeCateArray(cate2Obj,cate2Array,codeList,2);
+
+$(document).ready(function(){
+   console.log(cate1Array);
+   console.log(cate2Array);
+});
+
+/* 대분류 <option> 태그 */
+for(let i = 0; i < cate1Array.length; i++){
+   //cateSelect1.append("<option value='"+cate1Array[i].sidoCd+"'>" + cate1Array[i].sidoNm + "</option>");
+}
+
+/* 중분류 <option> 태그 */
+$(cateSelect1).on("change",function(){
+   let selectVal1 = $(this).find("option:selected").val();
+   
+   cateSelect2.children().remove();
+
+   cateSelect2.append("<option value='none'>군/구 선택</option>");
+
+   for(let i = 0; i < cate2Array.length; i++){
+      if(selectVal1 == cate2Array[i].parent){
+         cateSelect2.append("<option value='"+cate2Array[i].gugunNm+"'>" + cate2Array[i].gugunNm + "</option>")
+            
+         //cateSelect2.append("<option value='"+cate2Array[i].gugunCd+"'>" + cate2Array[i].gugunNm + "</option>")
+         //location.href = "/test/code?gugunCD="+cate2Array[i].gugunCd;
+      }
+   }      
+});
+
+$(cateSelect2).on("change",function(){
+      let selectVal2 = $(this).find("option:selected").val();
+      
+ });   
+</script>
 </body>
 </html>
