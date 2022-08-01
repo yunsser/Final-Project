@@ -53,6 +53,9 @@
 .form-control.me-2 {
 	width: 380px;
 }
+
+div > nav> a {text-decoration: none;}
+
 </style>
 </head>
 <body>

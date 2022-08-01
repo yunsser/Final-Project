@@ -39,6 +39,7 @@
 	border: none;
 	background: none;
 }
+a {text-decoration: none;}
 </style>
 
 

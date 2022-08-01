@@ -10,6 +10,7 @@
 	.pageBtn {
 		margin-bottom : 15px;
 	}
+	a {text-decoration: none;}
 </style>
 <!-- 본문 시작 -->
 	<div id = "info" class = "container">

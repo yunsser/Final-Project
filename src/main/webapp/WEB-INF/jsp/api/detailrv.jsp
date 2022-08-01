@@ -78,7 +78,7 @@ a {
 	<c:choose>
 		<c:when test="${seouldetail != null }">
 
-<div class="container">
+			<div class="container">
 
 				<div class="cntBts">
 					<c:choose>
@@ -547,6 +547,8 @@ geocoder.addressSearch('${csvdetail.SITEWHLADDR}', function(result, status) {
 								<input type="button" class="btn btn-primary"
 									onclick="addReview()" value="리뷰 작성" style="float: right;" />
 							</div>
+							<button type="button" class="btn btn btn-primary"
+								onclick="javascript:history.go(-2)" style="float: right;">목록</button>
 						</c:if>
 					</sec:authorize>
 

@@ -16,10 +16,6 @@
    .name { text-decoration:none; color:black;}
    #load { text-align: center; margin-top:130px; display: grid; justify-content: center; }
    .progress { width:400px;  }
-   .container{
-      margin-top : 15px; 
-   }
- 
 </style>
 
 

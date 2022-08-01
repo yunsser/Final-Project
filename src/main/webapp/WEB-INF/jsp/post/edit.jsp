@@ -113,7 +113,7 @@ function updateBoard() {
 			} else {
 				alert('저장 실패');
 			}
-			location.href = "/petmong/post/list";
+			location.href = "/petmong/post/list?uid=${user.user.uid }";
 		},
 		error: function(xhr, status, err) {
 			alert('err' + err);

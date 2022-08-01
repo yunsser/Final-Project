@@ -106,7 +106,7 @@
             } else {
                alert('저장 실패');
             }
-            location.href = "/petmong/shfc/shfclist";
+            location.href = "/petmong/shfc/shfclist?uid=${user.user.uid }";
          },
          error : function(xhr, status, err) {
              alert("code:"+xhr.status+"\n"+"message:"+xhr.responseText+"\n"+"error:"+err);
