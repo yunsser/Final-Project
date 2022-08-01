@@ -20,6 +20,7 @@
       	width: 95px; 
       	margin-right: 0.5em;
       	}
+      	a {text-decoration: none;}
 </style>
 </head> 
 <body>

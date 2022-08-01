@@ -37,6 +37,7 @@
 	#info{
 		margin-top : 15px;
 	  }
+	  a {text-decoration: none;}
 </style>
 </head> 
 <body>
