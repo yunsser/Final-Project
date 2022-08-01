@@ -154,25 +154,25 @@ a {text-decoration: none;}
 	<ul class="pagination">
 		<li class="page-item"><c:if test="${pageInfo.pages>5}">
 				<a class="page-link"
-					href="/petmong/post/list?pageNum=${pageInfo.navigateFirstPage-1}">&laquo;</a>
+					href="/petmong/post/list?uid=${user.user.uid}&pageNum=${pageInfo.navigateFirstPage-1}">&laquo;</a>
 			</c:if></li>
 
 		<c:forEach begin="${pageInfo.navigateFirstPage}"
 			end="${pageInfo.navigateLastPage}" var="num">
 			<c:choose>
 				<c:when test="${pageInfo.pageNum==num}">
-					<li class="page-item active"><a class="page-link" href="/petmong/post/list?pageNum=${num}">${num}</a></li>
+					<li class="page-item active"><a class="page-link" href="/petmong/post/list?uid=${user.user.uid}&pageNum=${num}">${num}</a></li>
 				</c:when>
 				<c:otherwise>
 					<li class="page-item"><a class="page-link"
-						href="/petmong/post/list?pageNum=${num}">${num}</a></li>
+						href="/petmong/post/list?uid=${user.user.uid}&pageNum=${num}">${num}</a></li>
 				</c:otherwise>
 
 			</c:choose>
 		</c:forEach>
 		<li class="page-item"><c:if test="${pageInfo.pages>5}">
 				<a class="page-link"
-					href="/petmong/post/list?pageNum=${pageInfo.navigateLastPage+1}">&raquo;</a>
+					href="/petmong/post/list?uid=${user.user.uid}&pageNum=${pageInfo.navigateLastPage+1}">&raquo;</a>
 			</c:if></li>
 	</ul>
 </div>

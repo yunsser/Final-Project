@@ -51,7 +51,7 @@ public class FailureHandler implements AuthenticationFailureHandler {
 		} else if (exception instanceof UsernameNotFoundException) { //존재하지 않는 아이디일 경우 예외.
 			errormsg = "존재하지 않는 사용자입니다.";
 		} else if (exception instanceof InternalAuthenticationServiceException ) { // 시스템 문제로 내부 인증 관련 처리 요청을 할 수 없는 경우 예외.
-			errormsg = "시스템 문제로 내부 인증 관련 처리 요청을 할 수 없습니다. 관리자에게 문의하세요.";
+			errormsg = "존재하지 않는 사용자입니다.";
 		} else if (exception instanceof DisabledException ) { // 계정 비활성화일 경우 예외.
 			errormsg = "계정이 비활성화되었습니다. 관리자에게 문의하세요.";
 		} else if (exception instanceof CredentialsExpiredException ) { // 비밀번호 유효 기간 만료일 경우 예외.
