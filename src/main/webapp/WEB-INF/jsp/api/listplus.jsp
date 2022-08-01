@@ -197,7 +197,7 @@ a {
 	<ul class="pagination">
 		<li class="page-item"><c:if test="${pageInfo.pages>5}">
 				<a class="page-link"
-					href="/petmong/shfc/shfclist?cate=${cate}&pageNum=${pageInfo.navigateFirstPage-1}">&laquo;</a>
+					href="/petmong/shfc/shfclist?uid=${user.user.uid}&cate=${cate}&pageNum=${pageInfo.navigateFirstPage-1}">&laquo;</a>
 			</c:if></li>
 
 		<c:forEach begin="${pageInfo.navigateFirstPage}"
@@ -205,18 +205,18 @@ a {
 			<c:choose>
 				<c:when test="${pageInfo.pageNum==num}">
 					<li class="page-item active"><a class="page-link"
-						href="/petmong/shfc/shfclist?cate=${cate}&pageNum=${num}">${num}</a></li>
+						href="/petmong/shfc/shfclist?uid=${user.user.uid}&cate=${cate}&pageNum=${num}">${num}</a></li>
 				</c:when>
 				<c:otherwise>
 					<li class="page-item"><a class="page-link"
-						href="/petmong/shfc/shfclist?&cate=${cate}&pageNum=${num}">${num}</a></li>
+						href="/petmong/shfc/shfclist?uid=${user.user.uid}&cate=${cate}&pageNum=${num}">${num}</a></li>
 				</c:otherwise>
 
 			</c:choose>
 		</c:forEach>
 		<li class="page-item"><c:if test="${pageInfo.pages>5}">
 				<a class="page-link"
-					href="/petmong/shfc/shfclist?cate=${cate}&pageNum=${pageInfo.navigateLastPage+1}">&raquo;</a>
+					href="/petmong/shfc/shfclist?uid=${user.user.uid}&cate=${cate}&pageNum=${pageInfo.navigateLastPage+1}">&raquo;</a>
 			</c:if></li>
 	</ul>
 </div>
