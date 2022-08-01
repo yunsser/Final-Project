@@ -130,7 +130,7 @@ function updateSharefc() {
          } else {
             alert('저장 실패');
          }
-         location.href = "/petmong/shfc/shfclist";
+         location.href = "/petmong/shfc/shfclist?uid=${user.user.uid }";
       },
       error: function(xhr, status, err) {
           alert("code:"+xhr.status+"\n"+"message:"+xhr.responseText+"\n"+"error:"+err);
@@ -278,7 +278,7 @@ function updateSharefc() {
          <div class="btlistsav">
             <button type="submit" class="btn btn-sm btn-primary">완료</button>
             <button type="button" class="btn btn-sm btn-primary"
-               onclick="location.href='/petmong/shfc/shfclist'">목록</button>
+               onclick="location.href='/petmong/shfc/shfclist?uid=${user.user.uid }'">목록</button>
          </div>
 
       
