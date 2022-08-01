@@ -1,4 +1,5 @@
 # Final-Project
-Final-Project // petmong
-20220626~20220729
+### 팀 프로젝트 (Java)
 
+##### 팀명: petmong
+#####기간 : 20220626~20220729
