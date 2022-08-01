@@ -386,7 +386,7 @@ var newText = text.replace(/(<([^>]+)>)/ig,"");
 						<button type="button" class="btn btn btn-primary"
 							onclick="location.href='/petmong/post/edit?num=${post.num}'">수정</button>
 						<button type="button" class="btn btn btn-primary"
-							onclick="location.href=del_board('${post.num}')">삭제</button>
+                     onclick="javascript:del_board('${post.num}')">삭제</button>
 					</c:if>
 				</sec:authorize>
 				<button type="button" class="btn btn btn-primary"
