@@ -406,7 +406,7 @@ function setThumbnail(event) {
 							<button type="button" class="btn btn btn-primary"
 								onclick="location.href='/petmong/shfc/shfcedit?num=${detail.sh_num}'">수정</button>
 							<button type="button" class="btn btn btn-primary"
-								onclick="location.href=del_board('${detail.sh_num}')">삭제</button>
+                        onclick="javascript:del_board('${detail.sh_num}')">삭제</button>
 						</c:if>
 					</sec:authorize>
 					<button type="button" class="btn btn btn-primary"

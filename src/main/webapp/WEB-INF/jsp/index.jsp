@@ -208,6 +208,8 @@ ol, ul {
     width: 95.5%;
     padding-bottom: 8px;
 }
+
+a {text-decoration: none;}
 </style>
 
 <main class="container">
