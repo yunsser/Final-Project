@@ -30,7 +30,8 @@
 		SUM(hos_likedislike.like) as sumlike , SUM(dislike) as sumdislike FROM
 		final.hos_likedislike GROUP BY hpnum) l
 		ON B.num = l.hpnum
-		WHERE RN BETWEEN #{start} AND
+		WHERE RN
+		BETWEEN #{start} AND
 		#{end}
 		ORDER BY num DESC
 	</select>
@@ -39,7 +40,8 @@
 	<insert id="board" parameterType="pet.main.vo.PostVO"
 		useGeneratedKeys="true" keyProperty="num">
 		INSERT INTO hospital VALUES(null,
-		#{sido}, #{gugun}, #{author}, #{name}, #{title}, #{summernote}, NOW(), 0)
+		#{sido}, #{gugun}, #{author}, #{name}, #{title}, #{summernote}, NOW(),
+		0)
 	</insert>
 
 	<!-- 파일업로드 -->
@@ -62,7 +64,8 @@
 		FROM hospital b
 		LEFT OUTER JOIN hos_attach a
 		ON b.num=a.hos_num
-		LEFT OUTER JOIN ( SELECT hpnum, SUM(hos_likedislike.like) as sumlike ,
+		LEFT
+		OUTER JOIN ( SELECT hpnum, SUM(hos_likedislike.like) as sumlike ,
 		SUM(dislike) as sumdislike FROM final.hos_likedislike GROUP BY hpnum)
 		l
 		ON b.num = l.hpnum
@@ -94,20 +97,25 @@
 
 	<!-- 리스트 가져오기 -->
 	<select id="codeList" resultType="map" parameterType="String">
-		SELECT * FROM hospital
+		SELECT *
+		FROM hospital
 	</select>
 
 	<!-- 시도 불러오기 -->
 	<select id="ShareFcList" resultType="pet.main.vo.PostVO"
 		parameterType="String">
 		SELECT * FROM
-		(SELECT * FROM hospital WHERE sido LIKE CONCAT('%', #{sido}, '%')) f
+		(SELECT * FROM hospital WHERE sido LIKE
+		CONCAT('%', #{sido}, '%')) f
 		LEFT
-		OUTER JOIN ( SELECT hpnum, SUM(hos_likedislike.like) as sumlike ,
-		SUM(dislike) as sumdislike FROM final.hos_likedislike GROUP BY hpnum)
+		OUTER JOIN ( SELECT hpnum,
+		SUM(hos_likedislike.like) as sumlike ,
+		SUM(dislike) as sumdislike FROM
+		final.hos_likedislike GROUP BY hpnum)
 		l
 		ON f.num = l.hpnum
-		WHERE f.gugun LIKE CONCAT('%', #{gugun}, '%')
+		WHERE f.gugun
+		LIKE CONCAT('%', #{gugun}, '%')
 		ORDER BY f.num DESC
 	</select>
 
@@ -120,7 +128,8 @@
 	<!-- 조회수 증가 -->
 	<update id="viewCnt" parameterType="Integer">
 		UPDATE hospital
-		SET viewCnt = viewCnt + 1
+		SET viewCnt =
+		viewCnt + 1
 		WHERE num = #{num}
 	</update>
 
@@ -138,7 +147,8 @@
 		SELECT
 		count(hos_likedislike.like)
 		FROM hos_likedislike
-		WHERE uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
+		WHERE uid = #{uid} AND
+		hpnum = #{hpnum} AND sido = #{sido}
 	</select>
 
 	<!-- 추천 수 확인 -->
@@ -146,7 +156,8 @@
 		SELECT
 		hos_likedislike.like
 		FROM hos_likedislike
-		WHERE uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
+		WHERE uid = #{uid} AND hpnum =
+		#{hpnum} AND sido = #{sido}
 	</select>
 
 	<!-- 게시글 추천 취소하기. -->
@@ -154,7 +165,8 @@
 		UPDATE hos_likedislike
 		SET
 		hos_likedislike.like = hos_likedislike.like - 1
-		WHERE uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
+		WHERE uid = #{uid} AND
+		hpnum = #{hpnum} AND sido = #{sido}
 	</update>
 
 	<!-- 추천 취소 후 다시 추천할 시 업데이트. -->
@@ -162,7 +174,8 @@
 		UPDATE hos_likedislike
 		SET
 		hos_likedislike.like = hos_likedislike.like + 1
-		WHERE uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
+		WHERE uid = #{uid} AND
+		hpnum = #{hpnum} AND sido = #{sido}
 	</update>
 
 	<!-- 게시글 비추천하기. -->
@@ -179,7 +192,8 @@
 		SELECT
 		count(hos_likedislike.dislike)
 		FROM hos_likedislike
-		WHERE uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
+		WHERE uid = #{uid}
+		AND hpnum = #{hpnum} AND sido = #{sido}
 	</select>
 
 	<!-- 비추천 수 확인 -->
@@ -187,14 +201,16 @@
 		parameterType="map">
 		SELECT hos_likedislike.dislike
 		FROM hos_likedislike
-		WHERE uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
+		WHERE
+		uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
 	</select>
 
 	<!-- 게시글 비추천 취소하기. -->
 	<update id="dislikeCancle" parameterType="map">
 		UPDATE hos_likedislike
 		SET hos_likedislike.dislike = hos_likedislike.dislike - 1
-		WHERE uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
+		WHERE uid =
+		#{uid} AND hpnum = #{hpnum} AND sido = #{sido}
 	</update>
 
 	<!-- 비추천 취소 후 다시 비추천할 시 업데이트. -->
@@ -202,7 +218,8 @@
 		UPDATE hos_likedislike
 		SET
 		hos_likedislike.dislike = hos_likedislike.dislike + 1
-		WHERE uid = #{uid} AND hpnum = #{hpnum} AND sido = #{sido}
+		WHERE uid =
+		#{uid} AND hpnum = #{hpnum} AND sido = #{sido}
 	</update>
 
 	<!-- 게시글 찜하기. -->
@@ -233,6 +250,10 @@
 		SELECT COUNT(*) as CNT
 		FROM shfc_dibson
 		WHERE uid = #{uid}
+		UNION ALL
+		SELECT COUNT(*) as CNT
+		FROM hp_dibson
+		WHERE uid = #{uid}
 		) total;
 	</select>
 
@@ -250,18 +271,25 @@
 		resultType="pet.main.vo.LikeDislikeVO">
 		SELECT lnum, uid, hpnum, hos_likedislike.like, dislike,
 		SUM(hos_likedislike.like) as sumlike, SUM(dislike) as sumdislike
-		FROM hos_likedislike;
+		FROM
+		hos_likedislike;
 	</select>
 
 	<!-- 메인 검색기능 -->
-	<select id="boardlist" resultType="pet.main.vo.PostVO" parameterType="String">
+	<select id="boardlist" resultType="pet.main.vo.PostVO"
+		parameterType="String">
 		SELECT *
 		FROM hospital h
-		LEFT OUTER JOIN ( SELECT hpnum, SUM(hos_likedislike.like) as sumlike ,
-		SUM(dislike) as sumdislike FROM final.hos_likedislike GROUP BY hpnum)
+		LEFT OUTER JOIN ( SELECT hpnum,
+		SUM(hos_likedislike.like) as sumlike ,
+		SUM(dislike) as sumdislike FROM
+		final.hos_likedislike GROUP BY hpnum)
 		l
 		ON h.num = l.hpnum
-		WHERE title LIKE CONCAT ('%', #{keyword}, '%') OR sido LIKE CONCAT ('%', #{keyword}, '%') OR gugun LIKE CONCAT ('%', #{keyword}, '%') OR summernote LIKE CONCAT ('%', #{keyword}, '%')
+		WHERE title
+		LIKE CONCAT ('%', #{keyword}, '%') OR sido LIKE CONCAT ('%',
+		#{keyword}, '%') OR gugun LIKE CONCAT ('%', #{keyword}, '%') OR
+		summernote LIKE CONCAT ('%', #{keyword}, '%')
 		ORDER BY
 		num DESC
 	</select>
@@ -270,15 +298,18 @@
 	<select id="countboardlist" resultType="int">
 		SELECT COUNT(*) FROM
 		hospital h
-		LEFT OUTER JOIN ( SELECT hpnum, SUM(hos_likedislike.like) as sumlike ,
-		SUM(dislike) as sumdislike FROM final.hos_likedislike GROUP BY hpnum)
+		LEFT OUTER JOIN ( SELECT hpnum, SUM(hos_likedislike.like) as
+		sumlike ,
+		SUM(dislike) as sumdislike FROM final.hos_likedislike GROUP
+		BY hpnum)
 		l
 		ON h.num = l.hpnum
-		WHERE title LIKE CONCAT ('%', #{keyword}, '%')
+		WHERE title LIKE CONCAT ('%', #{keyword},
+		'%')
 		ORDER BY
 		num DESC
 	</select>
-	
+
 
 
 </mapper>
